@@ -3,84 +3,71 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace projectAirport
 {
-    public class Thing
+    [JsonDerivedType(typeof(Crew), 1)]
+    [JsonDerivedType(typeof(Passenger), 2)]
+    public abstract class Thing
     {
-        public UInt64 ID { get; set; }
-
-        virtual public void UploadFromFile() { }
+        protected UInt64 id;
+        public UInt64 ID { get { return id; }  set { id = value; } }
     }
-
-    [Serializable]
-    public class Crew:Thing
+   
+    public abstract class Person:Thing
     {
-        public string Name { get; set; }
-        public UInt64 Age { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public UInt16 Practice { get; set; }
-        public string Role { get; set; }
+        protected string name;
+        protected string phone;
+        protected UInt64 age;
+        protected string email;
+        
+        public string Name { get { return name; } set { name = value; } }
+        public UInt64 Age { get { return age; } set { age = value; } }
+        public string Phone { get { return phone; } set { phone = value; } }
+        public string Email { get { return email; } set { email = value; } }
 
-        public Crew(){}
-
-        public Crew(UInt64 ID,string name, ulong age, string phone, string email, ushort practice, string role)
+        protected Person() { }
+        public Person(UInt64 id, string name, ulong age, string phone, string email)
         {
-            this.ID = ID;
+            ID = id;
             Name = name;
             Age = age;
             Phone = phone;
             Email = email;
+        }
+    }
+    
+    public class Crew: Person
+    {
+        protected UInt16 practice;
+        protected string role;
+        public UInt16 Practice { get { return practice; }  set { practice = value; } }
+        public string Role { get { return role; } set { role = value; } }
+
+        public Crew() { }
+
+        public Crew(UInt64 id, string name, ulong age, string phone, string email, ushort practice, string role):base(id, name,age, phone, email)
+        {
             Practice = practice;
             Role = role;
         }
-        public Crew(string[] fields)
-        {
-            if (fields.Length < 8) throw new Exception("Too short array");
-            ID = UInt64.Parse(fields[1]);
-            Name = fields[2];
-            Age = UInt64.Parse(fields[3]);
-            Phone = fields[4];
-            Email = fields[5];
-            Practice = UInt16.Parse(fields[6]);
-            Role = fields[7];
-        }
     }
 
-    public class Passenger:Thing
+    public class Passenger: Person
     {
-        public string Name { get; set; }
-        public UInt64 Age { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Class { get; set; }
-        public UInt64 Miles { get; set; }
+        protected string classe;
+        protected UInt64 miles;
+        public string Class { get { return classe; } set { classe = value; } }
+        public UInt64 Miles { get { return miles; } set { miles = value; } }
 
         public Passenger() { }
 
-        public Passenger(UInt64 ID, string name, ulong age, string phone, string email, string @class, ulong miles)
+        public Passenger(UInt64 id, string name, ulong age, string phone, string email, string classe, ulong miles) : base(id, name, age, phone, email)
         {
-            this.ID = ID;
-            Name = name;
-            Age = age;
-            Phone = phone;
-            Email = email;
-            Class = @class;
+            Class = classe;
             Miles = miles;
-        }
-
-        public Passenger(string[] fields)
-        {
-            if (fields.Length < 8) throw new Exception("Too short array");
-            ID = UInt64.Parse(fields[1]);
-            Name = fields[2];
-            Age = UInt64.Parse(fields[3]);
-            Phone = fields[4];
-            Email = fields[5];
-            Class = fields[6];
-            Miles = UInt64.Parse(fields[7]);
         }
     }
 }
