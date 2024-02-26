@@ -14,7 +14,9 @@ namespace projectAirport
             { "P", new FactoryPassenger()},
             { "CA", new FactoryCargo()},
             { "CP", new FactoryCargoPlane()},
-            { "PP", new FactoryPassengerPlane()}
+            { "PP", new FactoryPassengerPlane()},
+            { "AI", new FactoryAirport()},
+            { "FL", new FactoryFlight()}
         };
 
         public static List<string[]> ReadFileMethod(string filePath, char fieldSeparator = ',')
