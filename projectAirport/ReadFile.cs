@@ -11,7 +11,10 @@ namespace projectAirport
         static private Dictionary<string, Factory> factoryFunctions = new Dictionary<string, Factory>()
         {
             { "C", new FactoryCrew()},
-            { "P", new FactoryPassenger()}
+            { "P", new FactoryPassenger()},
+            { "CA", new FactoryCargo()},
+            { "CP", new FactoryCargoPlane()},
+            { "PP", new FactoryPassengerPlane()}
         };
 
         public static List<string[]> ReadFileMethod(string filePath, char fieldSeparator = ',')
