@@ -20,47 +20,26 @@ namespace MyApp // Note: actual namespace depends on the project name.
            
             File.WriteAllText(fileName, jsonString);
         }
-       
-        static void DeserializeJson(string filePath)
+        static void SerializeXML(List<Object> lista)
         {
-            List<Object> lista = new List<Object>();
-
             try
             {
-                // Read JSON file content line by line
-                string[] lines = File.ReadAllLines(filePath);
-
-                // Deserialize each line into a Crew object
-                foreach (string line in lines)
+                
+                using (FileStream fs = new FileStream("ss.xml", FileMode.OpenOrCreate))
                 {
-                    if(line.Contains("\"Miles\""))
+                    foreach (var obj in lista)
                     {
-                        Object crewMember = JsonSerializer.Deserialize<Passenger>(line);
-                        lista.Add(crewMember);
-                        JsonDocument jsonDocument = JsonDocument.Parse(line);
-                        JsonElement root = jsonDocument.RootElement;
-
-                        // Access properties of the JSON object
-                        string name = root.GetProperty("Name").GetString();
-                        Console.WriteLine(name);
+                        
+                        XmlSerializer serializer = new XmlSerializer(obj.GetType());
+                        serializer.Serialize(fs, obj);
                     }
-                    else
-                    {
-                        Object crewMember = JsonSerializer.Deserialize<Crew>(line);
-                        lista.Add(crewMember);
-                    }
-                    
                 }
+                Console.WriteLine("XML serialization successful.");
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error deserializing JSON: {ex.Message}");
+                Console.WriteLine($"Error during XML serialization: {ex.Message}");
             }
-            catch (IOException ex)
-            {
-                Console.WriteLine($"Error reading JSON file: {ex.Message}");
-            }
-            Console.WriteLine();
         }
 
         static List<Object> ConvertToObjectsList(List<string[]> stringList)
@@ -114,32 +93,10 @@ namespace MyApp // Note: actual namespace depends on the project name.
             List<string[]> readedLines=ReadFile("example_data.ftr");
             List<Object> objList = ConvertToObjectsList(readedLines);
             SerializeJson(objList, "objects.json");
+            SerializeXML(objList);
             
-            DeserializeJson("objects.json");
-
-            //DeserializeXML("people.xml");
+            
         }
     }
 }
 
-//static void SerializeXML(List<Crew> lista)
-//{
-//    XmlSerializer serializer = new XmlSerializer(typeof(List<Crew>));
-//    using (TextWriter writer = new StreamWriter("people.xml"))
-//    {
-//        serializer.Serialize(writer, lista);
-//    }
-
-
-//}
-
-//static void DeserializeXML(string filePath)
-//{
-//    XmlSerializer serializer = new XmlSerializer(typeof(List<Crew>));
-//    using (TextReader reader = new StreamReader(filePath))
-//    {
-//        var people = (List<Crew>)serializer.Deserialize(reader);
-
-//    }
-
-//}
