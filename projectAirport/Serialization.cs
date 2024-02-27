@@ -19,6 +19,7 @@ namespace projectAirport
             }
 
             File.WriteAllText(fileName, jsonString);
+            Console.WriteLine($"Data writed to file: {fileName}");
         }
     }
 }

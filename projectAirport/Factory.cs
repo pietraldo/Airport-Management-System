@@ -87,6 +87,7 @@ namespace projectAirport
             if (fields.Length < 12) throw new Exception("Too short array");
             fields[10]= fields[10].Substring(1, fields[10].Length - 2);
             fields[11]= fields[11].Substring(1, fields[11].Length - 2);
+            
             string[] strings1 = fields[10].Split(";");
             string[] strings2 = fields[11].Split(";");
             UInt64[] crewId= new UInt64[strings1.Length];
@@ -99,6 +100,7 @@ namespace projectAirport
             {
                 loadId[i] = UInt64.Parse(strings2[i]);
             }
+
             return new Flight(
                 UInt64.Parse(fields[1]),
                 UInt64.Parse(fields[2]),

@@ -36,7 +36,7 @@ namespace projectAirport
             }
             else
             {
-                Console.WriteLine("File not found: " + filePath);
+                Console.WriteLine("File not found: " +Environment.CurrentDirectory+"\\" +filePath);
                 Environment.Exit(1);
             }
             return readedLines;
