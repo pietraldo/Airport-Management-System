@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -43,7 +44,7 @@ namespace projectAirport
         {
             if (fields.Length < 5) throw new Exception("Too short array");
 
-            return new Cargo(UInt64.Parse(fields[1]), float.Parse(fields[2].Replace(".", ",")),
+            return new Cargo(UInt64.Parse(fields[1]), float.Parse(fields[2], CultureInfo.InvariantCulture),
                 fields[3], fields[4]);
         }
     }
@@ -54,7 +55,7 @@ namespace projectAirport
             if (fields.Length < 6) throw new Exception("Too short array");
 
             return new CargoPlane(UInt64.Parse(fields[1]), fields[2],
-                fields[3], fields[4], Single.Parse(fields[5].Replace(".", ",")));
+                fields[3], fields[4], Single.Parse(fields[5], CultureInfo.InvariantCulture));
         }
     }
     class FactoryPassengerPlane : Factory
@@ -75,7 +76,7 @@ namespace projectAirport
             if (fields.Length < 8) throw new Exception("Too short array");
 
             return new Airport(UInt64.Parse(fields[1]), fields[2],
-                fields[3], Single.Parse(fields[4].Replace(".", ",")), Single.Parse(fields[5].Replace(".", ",")),
+                fields[3], Single.Parse(fields[4], CultureInfo.InvariantCulture), Single.Parse(fields[5], CultureInfo.InvariantCulture),
                 Single.Parse(fields[6].Replace(".", ",")), fields[7]);
         }
     }
@@ -107,9 +108,9 @@ namespace projectAirport
                 UInt64.Parse(fields[3]),
                 fields[4],
                 fields[5],
-                Single.Parse(fields[6].Replace(".", ",")),
-                Single.Parse(fields[7].Replace(".", ",")),
-                Single.Parse(fields[8].Replace(".", ",")),
+                Single.Parse(fields[6], CultureInfo.InvariantCulture),
+                Single.Parse(fields[7], CultureInfo.InvariantCulture),
+                Single.Parse(fields[8], CultureInfo.InvariantCulture),
                 UInt64.Parse(fields[9]),
                 crewId,
                 loadId
