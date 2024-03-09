@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Xml.Serialization;
 
-namespace projectAirport 
+namespace projectAirport
 {
-   
+
 
     internal class Program
     {

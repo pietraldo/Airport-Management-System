@@ -36,7 +36,7 @@ namespace projectAirport
             }
             else
             {
-                Console.WriteLine("File not found: " +Environment.CurrentDirectory+"\\" +filePath);
+                Console.WriteLine("File not found: " + Environment.CurrentDirectory + "\\" + filePath);
                 Environment.Exit(1);
             }
             return readedLines;
@@ -44,8 +44,8 @@ namespace projectAirport
         public static List<Thing> ConvertToObjects(List<string[]> stringList)
         {
             List<Thing> objects = new List<Thing>();
-            
-            foreach(string[] str in stringList)
+
+            foreach (string[] str in stringList)
             {
                 if (factoryFunctions.ContainsKey(str[0]))
                     objects.Add(factoryFunctions[str[0]].makeObjectFromString(str));

@@ -168,7 +168,7 @@ namespace projectAirport
         }
     }
 
-    public class Flight: Thing
+    public class Flight : Thing
     {
         protected UInt64 origin;
         protected UInt64 target;
@@ -191,8 +191,8 @@ namespace projectAirport
         public UInt64[] CrewId { get { return crewId; } set { crewId = value; } }
         public UInt64[] LoadId { get { return loadId; } set { loadId = value; } }
 
-        public Flight(UInt64 id, ulong origin, ulong target, string takeOffTime, string landingTime, 
-            float longitude, float latitude, float amls, ulong plainId, ulong[] crewId, ulong[] loadId):base(id)
+        public Flight(UInt64 id, ulong origin, ulong target, string takeOffTime, string landingTime,
+            float longitude, float latitude, float amls, ulong plainId, ulong[] crewId, ulong[] loadId) : base(id)
         {
             Origin = origin;
             Target = target;
@@ -203,7 +203,7 @@ namespace projectAirport
             Amls = amls;
             PlainId = plainId;
             CrewId = new ulong[crewId.Length];
-            for(int i=0; i<crewId.Length; i++)
+            for (int i = 0; i < crewId.Length; i++)
                 CrewId[i] = crewId[i];
             LoadId = new ulong[loadId.Length];
             for (int i = 0; i < loadId.Length; i++)
