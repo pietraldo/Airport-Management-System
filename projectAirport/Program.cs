@@ -11,8 +11,8 @@ namespace projectAirport
 
     internal class Program
     {
-        private static string pathFileFTR = "example_data.ftr";
-        private static string pathFileJson = "things.json";
+        private static string pathFileFTR = "data/example_data.ftr";
+        private static string pathFileJson = "data/things.json";
 
         static void Main(string[] args)
         {
