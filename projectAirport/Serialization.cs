@@ -11,7 +11,7 @@ namespace projectAirport
     {
         public static void SerializeJson(List<Thing> lista, string fileName)
         {
-            var options = new JsonSerializerOptions { IncludeFields = true };
+            var options = new JsonSerializerOptions { IncludeFields = true, WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(lista, options);
 
             File.WriteAllText(fileName, jsonString);
