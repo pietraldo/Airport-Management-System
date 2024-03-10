@@ -218,7 +218,7 @@ namespace projectAirport
             for (int i = 0; i < pcc; i++)
                 passangers[i] = BitConverter.ToUInt64(msgBytes, 59 + 8 * cc + 8 * i);
 
-            return new Flight(id,origin,target, takeoffString, landingString, -1, -1,-1,planeId, crew, passangers);
+            return new Flight(id,origin,target, takeoffString, landingString, null, null, null,planeId, crew, passangers);
         }
     }
 

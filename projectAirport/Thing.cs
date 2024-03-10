@@ -174,9 +174,9 @@ namespace projectAirport
         protected UInt64 target;
         protected string takeOffTime;
         protected string landingTime;
-        protected Single longitude;
-        protected Single latitude;
-        protected Single amls;
+        protected Single? longitude;
+        protected Single? latitude;
+        protected Single? amls;
         protected UInt64 plainId;
         protected UInt64[] crewId;
         protected UInt64[] loadId;
@@ -184,15 +184,15 @@ namespace projectAirport
         public UInt64 Target { get { return target; } set { target = value; } }
         public string TakeOffTime { get { return takeOffTime; } set { takeOffTime = value; } }
         public string LandingTime { get { return landingTime; } set { landingTime = value; } }
-        public Single Longitude { get { return longitude; } set { longitude = value; } }
-        public Single Latitude { get { return latitude; } set { latitude = value; } }
-        public Single Amls { get { return amls; } set { amls = value; } }
+        public Single? Longitude { get { return longitude; } set { longitude = value; } }
+        public Single? Latitude { get { return latitude; } set { latitude = value; } }
+        public Single? Amls { get { return amls; } set { amls = value; } }
         public UInt64 PlainId { get { return plainId; } set { plainId = value; } }
         public UInt64[] CrewId { get { return crewId; } set { crewId = value; } }
         public UInt64[] LoadId { get { return loadId; } set { loadId = value; } }
 
         public Flight(UInt64 id, UInt64 origin, UInt64 target, string takeOffTime, string landingTime,
-            float longitude, float latitude, float amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
+            float? longitude, float? latitude, float? amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
         {
             Origin = origin;
             Target = target;

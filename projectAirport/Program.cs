@@ -15,6 +15,7 @@ namespace projectAirport
     {
         private static string pathFileFTR = "data/example_data.ftr";
         private static string pathFileJson = "data/things.json";
+        
 
         static NetworkSourceSimulator netSim;
 
@@ -30,19 +31,14 @@ namespace projectAirport
         };
         static List<Thing> thingList = new List<Thing>();
 
-        static int numMsg = 0;
         static void WriteMessage(object sender, NewDataReadyArgs e)
         {
-            // Write your message here
-            //Console.WriteLine("Message received. Index: " + e.MessageIndex);
-            Message msg= netSim.GetMessageAt(numMsg);
+            Message msg= netSim.GetMessageAt(e.MessageIndex);
             
             byte[] msgBytes=msg.MessageBytes;
             string type= Encoding.ASCII.GetString(msgBytes,0,3);
 
             thingList.Add(factoryFunctions[type].makeObjectFromBytes(msgBytes));
-
-            numMsg++;
         }
 
         
@@ -54,7 +50,10 @@ namespace projectAirport
             netSim.OnNewDataReady += WriteMessage;
 
             // starting serwer thread
-            Thread tcpSerwer = new Thread(new ThreadStart(netSim.Run)){ IsBackground = true };
+            Thread tcpSerwer = new Thread(new ThreadStart(netSim.Run))
+            {
+                IsBackground = true
+            };
             tcpSerwer.Start();
 
 
@@ -63,15 +62,19 @@ namespace projectAirport
             {
                 if (asw == "print")
                 {
-                    Serialization.SerializeJson(thingList, "snapshot" + numMsg.ToString() + ".json");
+                    int h = DateTime.Now.Hour;
+                    int min = DateTime.Now.Minute;
+                    int sec = DateTime.Now.Second;
+
+                    string hs = ((h < 10) ? "0" : "")+h.ToString();
+                    string mins = ((min < 10) ? "0" : "")+min.ToString();
+                    string secs = ((sec < 10) ? "0" : "")+sec.ToString();
+
+                    string snapName = "data/snapshot_"+hs + "_" + mins + "_" + secs + ".json";
+
+                    Serialization.SerializeJson(thingList,  snapName);
                 }
             }
-            Console.WriteLine("exiting...");
-
-            
-            tcpSerwer.Join();
-            Console.WriteLine("joined...");
-
         }
     }
 }
