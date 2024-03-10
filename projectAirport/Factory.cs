@@ -31,14 +31,14 @@ namespace projectAirport
             UInt64 id = BitConverter.ToUInt64(msgBytes, 7);
             UInt16 nl = BitConverter.ToUInt16(msgBytes, 15);
             string name = Encoding.ASCII.GetString(msgBytes, 17, nl);
-            UInt16 age = BitConverter.ToUInt16(msgBytes, 17+nl);
-            string phone = Encoding.ASCII.GetString(msgBytes, 19+nl, 12);
-            UInt16 el = BitConverter.ToUInt16(msgBytes, 31+nl);
-            string email = Encoding.ASCII.GetString(msgBytes, 33+nl, el);
-            UInt16 practise = BitConverter.ToUInt16(msgBytes, 33 + nl+el);
-            string role = Encoding.ASCII.GetString(msgBytes, 35 + nl+el, 1);
-            
-            return new Crew(id,name, age, phone, email, practise, role);
+            UInt16 age = BitConverter.ToUInt16(msgBytes, 17 + nl);
+            string phone = Encoding.ASCII.GetString(msgBytes, 19 + nl, 12);
+            UInt16 el = BitConverter.ToUInt16(msgBytes, 31 + nl);
+            string email = Encoding.ASCII.GetString(msgBytes, 33 + nl, el);
+            UInt16 practise = BitConverter.ToUInt16(msgBytes, 33 + nl + el);
+            string role = Encoding.ASCII.GetString(msgBytes, 35 + nl + el, 1);
+
+            return new Crew(id, name, age, phone, email, practise, role);
         }
     }
 
@@ -83,8 +83,8 @@ namespace projectAirport
             string code = Encoding.ASCII.GetString(msgBytes, 19, 6);
             UInt16 dl = BitConverter.ToUInt16(msgBytes, 25);
             string description = Encoding.ASCII.GetString(msgBytes, 27, dl);
-           
-            return new Cargo(id,weight,code, description);
+
+            return new Cargo(id, weight, code, description);
         }
     }
     class FactoryCargoPlane : Factory
@@ -125,9 +125,9 @@ namespace projectAirport
             string country = Encoding.ASCII.GetString(msgBytes, 25, 3);
             UInt16 ml = BitConverter.ToUInt16(msgBytes, 28);
             string model = Encoding.ASCII.GetString(msgBytes, 30, ml);
-            UInt16 firstClass = BitConverter.ToUInt16(msgBytes, 30+ml);
-            UInt16 BuissnessClass = BitConverter.ToUInt16(msgBytes, 32+ml);
-            UInt16 EconomyClass = BitConverter.ToUInt16(msgBytes, 34+ml);
+            UInt16 firstClass = BitConverter.ToUInt16(msgBytes, 30 + ml);
+            UInt16 BuissnessClass = BitConverter.ToUInt16(msgBytes, 32 + ml);
+            UInt16 EconomyClass = BitConverter.ToUInt16(msgBytes, 34 + ml);
 
             return new PassengerPlane(id, serial, country, model, firstClass, BuissnessClass, EconomyClass);
         }
@@ -146,15 +146,15 @@ namespace projectAirport
         public override Thing makeObjectFromBytes(byte[] msgBytes)
         {
             UInt64 id = BitConverter.ToUInt64(msgBytes, 7);
-            UInt16 nl = BitConverter.ToUInt16(msgBytes,15);   
+            UInt16 nl = BitConverter.ToUInt16(msgBytes, 15);
             string name = Encoding.ASCII.GetString(msgBytes, 17, nl);
-            string code = Encoding.ASCII.GetString(msgBytes, 17+nl, 3);
-            Single longitude=BitConverter.ToSingle(msgBytes, 20+nl);
-            Single latitude=BitConverter.ToSingle(msgBytes, 24+nl);
-            Single amsl=BitConverter.ToSingle(msgBytes, 28+nl);
+            string code = Encoding.ASCII.GetString(msgBytes, 17 + nl, 3);
+            Single longitude = BitConverter.ToSingle(msgBytes, 20 + nl);
+            Single latitude = BitConverter.ToSingle(msgBytes, 24 + nl);
+            Single amsl = BitConverter.ToSingle(msgBytes, 28 + nl);
             string country = Encoding.ASCII.GetString(msgBytes, 32 + nl, 3);
 
-            return new Airport(id,name,code,longitude, latitude,amsl,country);
+            return new Airport(id, name, code, longitude, latitude, amsl, country);
         }
     }
 
@@ -202,7 +202,7 @@ namespace projectAirport
             UInt64 landing = BitConverter.ToUInt64(msgBytes, 39);
             UInt64 planeId = BitConverter.ToUInt64(msgBytes, 47);
             UInt16 cc = BitConverter.ToUInt16(msgBytes, 55);
-            UInt16 pcc = BitConverter.ToUInt16(msgBytes, 57+8*cc);
+            UInt16 pcc = BitConverter.ToUInt16(msgBytes, 57 + 8 * cc);
 
             DateTime takeoffDateTime = DateTimeOffset.FromUnixTimeMilliseconds((long)takeoff).UtcDateTime;
             DateTime landingTime = DateTimeOffset.FromUnixTimeMilliseconds((long)landing).UtcDateTime;
@@ -212,13 +212,13 @@ namespace projectAirport
             UInt64[] crew = new UInt64[cc];
             UInt64[] passangers = new UInt64[pcc];
 
-            for(int i=0; i<cc; i++)
+            for (int i = 0; i < cc; i++)
                 crew[i] = BitConverter.ToUInt64(msgBytes, 57 + 8 * i);
-            
+
             for (int i = 0; i < pcc; i++)
                 passangers[i] = BitConverter.ToUInt64(msgBytes, 59 + 8 * cc + 8 * i);
 
-            return new Flight(id,origin,target, takeoffString, landingString, null, null, null,planeId, crew, passangers);
+            return new Flight(id, origin, target, takeoffString, landingString, null, null, null, planeId, crew, passangers);
         }
     }
 
