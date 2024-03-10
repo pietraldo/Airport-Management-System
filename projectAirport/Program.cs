@@ -18,6 +18,7 @@ namespace projectAirport
 
         static void Main(string[] args)
         {
+            // creating network simulator
             NetworkSourceSimulator netSim = new NetworkSourceSimulator(pathFileFTR, 1, 1);
 
             // adding event handler
