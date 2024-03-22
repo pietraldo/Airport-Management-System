@@ -31,7 +31,7 @@ namespace projectAirport
             tcpSerwer.Start();
 
             // reading user commends
-            string asw;
+            string? asw;
             while ((asw = Console.ReadLine()) != "exit")
             {
                 if (asw == "print")
