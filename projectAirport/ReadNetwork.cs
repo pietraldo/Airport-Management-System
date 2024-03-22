@@ -8,22 +8,23 @@ using System.Threading.Tasks;
 namespace projectAirport
 {
     using NetworkSourceSimulator;
-    internal class ReadNetwork
-    {
-        private static List<Thing> thingList = new List<Thing>();
+    using System.Data;
 
-        private static Dictionary<string, Factory> factoryFunctions = new Dictionary<string, Factory>()
+    internal class ReadNetwork(List<Thing> thingList)
+    {
+        private List<Thing> thingList = thingList;
+        private static Dictionary<string, FactoryFromBytes> factoryFunctions = new Dictionary<string, FactoryFromBytes>()
         {
-            { "NCR", new FactoryCrew()},
-            { "NPA", new FactoryPassenger()},
-            { "NCA", new FactoryCargo()},
-            { "NCP", new FactoryCargoPlane()},
-            { "NPP", new FactoryPassengerPlane()},
-            { "NAI", new FactoryAirport()},
-            { "NFL", new FactoryFlight()}
+            { "NCR", new FactoryFromBytesCrew()},
+            { "NPA", new FactoryFromBytesPassenger()},
+            { "NCA", new FactoryFromBytesCargo()},
+            { "NCP", new FactoryFromBytesCargoPlane()},
+            { "NPP", new FactoryFromBytesPassengerPlane()},
+            { "NAI", new FactoryFromBytesAirport()},
+            { "NFL", new FactoryFromBytesFlight()}
         };
 
-        public static void MessageHandler(object sender, NewDataReadyArgs e)
+        public void MessageHandler(object sender, NewDataReadyArgs e)
         {
             Message msg = ((NetworkSourceSimulator)sender).GetMessageAt(e.MessageIndex);
 
@@ -32,18 +33,9 @@ namespace projectAirport
 
             thingList.Add(factoryFunctions[type].makeObjectFromBytes(msgBytes));
         }
-        public static void MakeSnapshot()
+        public void MakeSnapshot()
         {
-            // seting name for snapshot
-            int h = DateTime.Now.Hour;
-            int min = DateTime.Now.Minute;
-            int sec = DateTime.Now.Second;
-
-            string hs = ((h < 10) ? "0" : "") + h.ToString();
-            string mins = ((min < 10) ? "0" : "") + min.ToString();
-            string secs = ((sec < 10) ? "0" : "") + sec.ToString();
-
-            string snapName = "data/snapshot_" + hs + "_" + mins + "_" + secs + ".json";
+            string snapName = $"data/snapshot_{DateTime.Now:HH_mm_ss}.json";
 
             Serialization.SerializeJson(thingList, snapName);
         }

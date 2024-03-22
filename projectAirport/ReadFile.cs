@@ -8,15 +8,15 @@ namespace projectAirport
 {
     internal class ReadFile
     {
-        static private Dictionary<string, Factory> factoryFunctions = new Dictionary<string, Factory>()
+        static private Dictionary<string, FactoryFromString> factoryFunctions = new Dictionary<string, FactoryFromString>()
         {
-            { "C", new FactoryCrew()},
-            { "P", new FactoryPassenger()},
-            { "CA", new FactoryCargo()},
-            { "CP", new FactoryCargoPlane()},
-            { "PP", new FactoryPassengerPlane()},
-            { "AI", new FactoryAirport()},
-            { "FL", new FactoryFlight()}
+            { "C", new FactoryFromStringCrew()},
+            { "P", new FactoryFromStringPassenger()},
+            { "CA", new FactoryFromStringCargo()},
+            { "CP", new FactoryFromStringCargoPlane()},
+            { "PP", new FactoryFromStringPassengerPlane()},
+            { "AI", new FactoryFromStringAirport()},
+            { "FL", new FactoryFromStringFlight()}
         };
 
         public static List<string[]> ReadFileMethod(string filePath, char fieldSeparator = ',')

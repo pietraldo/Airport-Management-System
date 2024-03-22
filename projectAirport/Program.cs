@@ -15,6 +15,7 @@ namespace projectAirport
     {
         private static string pathFileFTR = "data/example_data.ftr";
         private static string pathFileJson = "data/things.json";
+        private static List<Thing> thingList = new List<Thing>();
 
         static void Main(string[] args)
         {
@@ -22,7 +23,8 @@ namespace projectAirport
             NetworkSourceSimulator netSim = new NetworkSourceSimulator(pathFileFTR, 1, 1);
 
             // adding event handler
-            netSim.OnNewDataReady += ReadNetwork.MessageHandler;
+            ReadNetwork reader1 = new ReadNetwork(thingList);
+            netSim.OnNewDataReady += reader1.MessageHandler;
 
             // starting serwer thread
             Thread tcpSerwer = new Thread(new ThreadStart(netSim.Run)) { IsBackground = true };
@@ -34,7 +36,7 @@ namespace projectAirport
             {
                 if (asw == "print")
                 {
-                    ReadNetwork.MakeSnapshot();
+                    reader1.MakeSnapshot();
                 }
             }
         }
