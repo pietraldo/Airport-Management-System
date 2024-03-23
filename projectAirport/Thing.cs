@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace projectAirport
     {
         protected UInt64 id;
         public UInt64 ID { get { return id; } set { id = value; } }
+
+        public virtual void devideList(List<Airport> air, List<Flight> fl) { }
         public Thing(UInt64 id)
         {
             ID = id;
@@ -166,6 +169,7 @@ namespace projectAirport
             Amls = amls;
             Country = country;
         }
+        public override void devideList(List<Airport> air, List<Flight> fl) { air.Add(this); }
     }
 
     public class Flight : Thing
@@ -208,6 +212,44 @@ namespace projectAirport
             LoadId = new ulong[loadId.Length];
             for (int i = 0; i < loadId.Length; i++)
                 LoadId[i] = loadId[i];
+        }
+        public override void devideList(List<Airport> air, List<Flight> fl) { fl.Add(this); }
+
+        public bool UpdatePosition(Airport airStart, Airport airEnd,double currentTime)
+        {
+            TimeOnly start = new TimeOnly();
+            TimeOnly end = new TimeOnly();
+            TimeOnly.TryParse(takeOffTime, out start);
+            TimeOnly.TryParse(landingTime, out end);
+
+
+            double startSec = (start - new TimeOnly(0, 0)).TotalSeconds;
+            double endSec = (end - new TimeOnly(0, 0)).TotalSeconds;
+            //double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
+
+            if (startSec > endSec) endSec += 24 * 3600;
+
+            double duration = startSec - endSec;
+
+
+
+
+            // plane don't fly now
+            if (!(startSec <= currentTime && endSec >= currentTime))
+            {
+                latitude = 100;
+                return false;
+            }
+
+            double procTimePassed = (currentTime - startSec) / duration;
+
+            float distx = airStart.Longitude - airEnd.Longitude;
+            float disty = airStart.Latitude - airEnd.Latitude;
+
+            longitude = (float)(airStart.Longitude + procTimePassed * distx);
+            latitude = (float)(airStart.Latitude + procTimePassed * disty);
+
+            return true;
         }
     }
 }

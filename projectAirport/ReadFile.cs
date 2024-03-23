@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using projectAirport.Factory;
 
 namespace projectAirport
 {
@@ -27,7 +28,7 @@ namespace projectAirport
                 List<Object> crews = new List<Object>();
                 using (StreamReader reader = new StreamReader(filePath))
                 {
-                    string line;
+                    string? line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         readedLines.Add(line.Split(fieldSeparator));
