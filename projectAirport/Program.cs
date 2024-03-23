@@ -72,7 +72,6 @@ namespace projectAirport
             Thread apka = new Thread(new ThreadStart(Runner.Run));
             apka.Start();
 
-            Thread.Sleep(5);
             // Getting all objects
             List<Thing> things = ReadFile.ConvertToObjects(ReadFile.ReadFileMethod(pathFileFTR));
             
@@ -82,12 +81,6 @@ namespace projectAirport
             {
                 thing.devideList(airportList, flights);
             }
-
-
-
-            //flights.Add(new Flight(1,2,3,"17:38", "17:39", 85, 85,0,0,new ulong[0], new ulong[0]));
-            //airportList.Add(new Airport(2, "", "", 0, -0, 0, ""));
-            //airportList.Add(new Airport(3, "", "", 180, 85f, 0, ""));
 
 
             List<(Flight, (Airport, Airport))> ff = new List<(Flight, (Airport, Airport))>();

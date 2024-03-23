@@ -229,7 +229,7 @@ namespace projectAirport
 
             if (startSec > endSec) endSec += 24 * 3600;
 
-            double duration = startSec - endSec;
+            double duration = endSec - startSec;
 
 
 
@@ -243,8 +243,8 @@ namespace projectAirport
 
             double procTimePassed = (currentTime - startSec) / duration;
 
-            float distx = airStart.Longitude - airEnd.Longitude;
-            float disty = airStart.Latitude - airEnd.Latitude;
+            float distx =  airEnd.Longitude - airStart.Longitude;
+            float disty =  airEnd.Latitude - airStart.Latitude;
 
             longitude = (float)(airStart.Longitude + procTimePassed * distx);
             latitude = (float)(airStart.Latitude + procTimePassed * disty);

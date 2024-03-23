@@ -19,29 +19,17 @@ namespace projectAirport
             ID = flight.ID;
             WorldPosition = new WorldPosition((double)flight.Latitude, (double)flight.Longitude);
 
-            (double, double) aa = SphericalMercator.FromLonLat(start.Longitude, start.Latitude);
-            (double, double) bb = SphericalMercator.FromLonLat(end.Longitude, end.Latitude);
+            (double start_x, double start_y)  = SphericalMercator.FromLonLat(start.Longitude, start.Latitude);
+            (double end_x, double end_y) = SphericalMercator.FromLonLat(end.Longitude, end.Latitude);
 
 
 
-            double distX = bb.Item1 - aa.Item1;
-            double distY = bb.Item2 - aa.Item2;
+            double distX = end_x - start_x;
+            double distY = end_y - start_y;
             
             MapCoordRotation = Math.Atan2(distX, distY);
 
-            if (!(distY > 0 && distX > 0))
-                return;
             
-            
-
-            //else if(distY>0 && distX<0)
-            //    MapCoordRotation = 3*double.Pi/2- Math.Atan(Math.Abs(distX) / Math.Abs(distY));
-            //else if(distY<0 && distX>0)
-            //    MapCoordRotation = double.Pi/2- Math.Atan(Math.Abs(distX) / Math.Abs(distY));
-            //else //if(distY<0 && distX<0)
-            //    MapCoordRotation = 3*double.Pi/2+ Math.Atan(Math.Abs(distX) / Math.Abs(distY));
-
-            //MapCoordRotation = 0.57;
         }
 
     }
