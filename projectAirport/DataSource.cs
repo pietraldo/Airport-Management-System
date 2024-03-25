@@ -28,7 +28,7 @@ namespace projectAirport
         private void NetworkSimulator(string file_path)
         {
             // creating network simulator
-            NetworkSourceSimulator netSim = new NetworkSourceSimulator(file_path, 501, 1000);
+            NetworkSourceSimulator netSim = new NetworkSourceSimulator(file_path, 1, 1);
 
             // adding event handler
             ReadNetwork reader1 = new ReadNetwork(thingList, divider);

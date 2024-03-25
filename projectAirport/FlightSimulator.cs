@@ -15,34 +15,21 @@ namespace projectAirport
 
             flightsGUI = new FlightsGUIData();
         }
-        public void ShowPlanes(List<Flight> flights, double currentTime)
+
+        public void ShowPlanes(List<Flight> flights)
         {
+            List<FlightGUI> lista = new List<FlightGUI>();
 
-            
-
-            
-            
-                List<FlightGUI> lista = new List<FlightGUI>();
-                foreach (var flight in flights)
+            // adding planes that are flying
+            foreach (Flight flight in flights)
+                if (flight.UpdatePosition())
                 {
-                    if (flight.UpdatePosition(currentTime))
-                    {
-                        AdapterFlightGui adp = new AdapterFlightGui(flight);
-                        lista.Add(adp);
-                    }
-
+                    AdapterFlightGui adp = new AdapterFlightGui(flight);
+                    lista.Add(adp);
                 }
 
-                Console.WriteLine($"{DateTime.Now.Date.AddSeconds(currentTime).Hour}:{DateTime.Now.Date.AddSeconds(currentTime).Minute}");
-
-
-                flightsGUI.UpdateFlights(lista);
-
-                Runner.UpdateGUI(flightsGUI);
-                
-
-            
-
+            flightsGUI.UpdateFlights(lista);
+            Runner.UpdateGUI(flightsGUI);
         }
     }
 }

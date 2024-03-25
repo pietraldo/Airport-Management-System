@@ -221,23 +221,20 @@ namespace projectAirport
         }
         public override void devideList(ListDivider lsd) { lsd.AddFlights(this); }
 
-        public bool UpdatePosition(double currentTime)
+        public bool UpdatePosition()
         {
             TimeOnly start = new TimeOnly();
             TimeOnly end = new TimeOnly();
             TimeOnly.TryParse(takeOffTime, out start);
             TimeOnly.TryParse(landingTime, out end);
 
+            double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
 
             double startSec = (start - new TimeOnly(0, 0)).TotalSeconds;
             double endSec = (end - new TimeOnly(0, 0)).TotalSeconds;
-            //double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
 
+            // if start is later than end
             if (startSec > endSec) endSec += 24 * 3600;
-
-            double duration = endSec - startSec;
-
-
 
 
             // plane don't fly now
@@ -249,10 +246,11 @@ namespace projectAirport
                 return FlightSimulator.ShowOnlyFlyingPlanes;
             }
 
+            double duration = endSec - startSec;
             double procTimePassed = (currentTime - startSec) / duration;
 
-            float distx =  target.Longitude - origin.Longitude;
-            float disty =  target.Latitude - origin.Latitude;
+            float distx = target.Longitude - origin.Longitude;
+            float disty = target.Latitude - origin.Latitude;
 
             longitude = (float)(origin.Longitude + procTimePassed * distx);
             latitude = (float)(origin.Latitude + procTimePassed * disty);

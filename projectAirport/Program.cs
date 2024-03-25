@@ -22,32 +22,21 @@ namespace projectAirport
     {
         static void Main(string[] args)
         {
-
-            
+            // getting data
             DataSource dataSource = new DataSource();
-           // dataSource.FromFile("data/bez_lotow.ftr");
             dataSource.FromFile("data/example_data.ftr");
 
-            //dataSource.FromNetwork("data/loty.ftr");
-
-           
-
+            // starting simulation
             FlightSimulator flightSimulator = new FlightSimulator();
-
-            DateTime currentHour = DateTime.Now.Date;
-            double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
-            float speed = 3600;
             while (true)
             {
-                lock(dataSource.thingList)
+                lock (dataSource.thingList)
                 {
-                    flightSimulator.ShowPlanes(dataSource.divider.Flights, currentTime);
+                    flightSimulator.ShowPlanes(dataSource.divider.Flights);
                 }
-               
-                Thread.Sleep(10);
-                currentTime += speed / 100;
+                Thread.Sleep(1000);
             }
-            
+
         }
     }
 }
