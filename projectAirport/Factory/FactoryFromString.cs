@@ -9,11 +9,11 @@ namespace projectAirport.Factory
 {
     abstract class FactoryFromString
     {
-        public abstract Thing makeObjectFromString(string[] fields);
+        public abstract Thing makeObjectFromString(string[] fields, ListDivider divider);
     }
     class FactoryFromStringCrew : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 8) throw new Exception("Too short array");
 
@@ -25,7 +25,7 @@ namespace projectAirport.Factory
 
     class FactoryFromStringPassenger : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 8) throw new Exception("Too short array");
 
@@ -36,7 +36,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromStringCargo : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 5) throw new Exception("Too short array");
 
@@ -46,7 +46,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromStringCargoPlane : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 6) throw new Exception("Too short array");
 
@@ -56,7 +56,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromStringPassengerPlane : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 8) throw new Exception("Too short array");
 
@@ -67,7 +67,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromStringAirport : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 8) throw new Exception("Too short array");
 
@@ -79,7 +79,7 @@ namespace projectAirport.Factory
 
     class FactoryFromStringFlight : FactoryFromString
     {
-        public override Thing makeObjectFromString(string[] fields)
+        public override Thing makeObjectFromString(string[] fields, ListDivider divider)
         {
             if (fields.Length < 12) throw new Exception("Too short array");
             fields[10] = fields[10].Substring(1, fields[10].Length - 2);
@@ -97,11 +97,23 @@ namespace projectAirport.Factory
             {
                 loadId[i] = ulong.Parse(strings2[i]);
             }
+            ulong fromId=ulong.Parse(fields[2]);
+            ulong toId = ulong.Parse(fields[3]);
+            Airport from = null;
+            Airport to = null;
+            
+            foreach(Airport airport in divider.Airports)
+            {
+                if(airport.ID==fromId)
+                    from = airport;
+                if(airport.ID==toId)
+                    to = airport;
+            }
 
             return new Flight(
                 ulong.Parse(fields[1]),
-                ulong.Parse(fields[2]),
-                ulong.Parse(fields[3]),
+                from,
+                to,
                 fields[4],
                 fields[5],
                 float.Parse(fields[6], CultureInfo.InvariantCulture),

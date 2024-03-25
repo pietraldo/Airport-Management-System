@@ -6,6 +6,7 @@ namespace projectAirport
     internal class FlightSimulator
     {
         private FlightsGUIData flightsGUI;
+        public static bool ShowOnlyFlyingPlanes = false;
         public FlightSimulator()
         {
             // Running graphical interface
@@ -14,37 +15,19 @@ namespace projectAirport
 
             flightsGUI = new FlightsGUIData();
         }
-        public void ShowPlanes(List<Flight> flights, List<Airport> airportList)
+        public void ShowPlanes(List<Flight> flights, double currentTime)
         {
-         
-
-            List<(Flight, (Airport, Airport))> ff = new List<(Flight, (Airport, Airport))>();
-            foreach (Flight flight in flights)
-            {
-                Airport from = null;
-                Airport to = null;
-                foreach (Airport airport in airportList)
-                {
-                    if (flight.Origin == airport.ID)
-                    { from = airport; }
-                    if (flight.Target == airport.ID)
-                    { to = airport; }
-                }
-                ff.Add((flight, (from, to)));
-            }
-            DateTime currentHour = DateTime.Now.Date;
-            double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
-            float speed = 2000;
 
             
-            while (true)
-            {
+
+            
+            
                 List<FlightGUI> lista = new List<FlightGUI>();
-                foreach (var flight in ff)
+                foreach (var flight in flights)
                 {
-                    if (flight.Item1.UpdatePosition(flight.Item2.Item1, flight.Item2.Item2, currentTime))
+                    if (flight.UpdatePosition(currentTime))
                     {
-                        AdapterFlightGui adp = new AdapterFlightGui(flight.Item1, flight.Item2.Item1, flight.Item2.Item2);
+                        AdapterFlightGui adp = new AdapterFlightGui(flight);
                         lista.Add(adp);
                     }
 
@@ -56,10 +39,9 @@ namespace projectAirport
                 flightsGUI.UpdateFlights(lista);
 
                 Runner.UpdateGUI(flightsGUI);
-                Thread.Sleep(10);
-                currentTime += speed / 100;
+                
 
-            }
+            
 
         }
     }

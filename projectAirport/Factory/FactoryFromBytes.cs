@@ -9,11 +9,11 @@ namespace projectAirport.Factory
 {
     abstract class FactoryFromBytes
     {
-        public abstract Thing makeObjectFromBytes(byte[] fields);
+        public abstract Thing makeObjectFromBytes(byte[] fields, ListDivider divider);
     }
     class FactoryFromBytesCrew : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             ushort nl = BitConverter.ToUInt16(msgBytes, 15);
@@ -31,7 +31,7 @@ namespace projectAirport.Factory
 
     class FactoryFromBytesPassenger : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             ushort nl = BitConverter.ToUInt16(msgBytes, 15);
@@ -48,7 +48,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromBytesCargo : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             float weight = BitConverter.ToSingle(msgBytes, 15);
@@ -61,7 +61,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromBytesCargoPlane : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             string serial = Encoding.ASCII.GetString(msgBytes, 15, 10);
@@ -75,7 +75,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromBytesPassengerPlane : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             string serial = Encoding.ASCII.GetString(msgBytes, 15, 10);
@@ -92,7 +92,7 @@ namespace projectAirport.Factory
     }
     class FactoryFromBytesAirport : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             ushort nl = BitConverter.ToUInt16(msgBytes, 15);
@@ -109,7 +109,7 @@ namespace projectAirport.Factory
 
     class FactoryFromBytesFlight : FactoryFromBytes
     {
-        public override Thing makeObjectFromBytes(byte[] msgBytes)
+        public override Thing makeObjectFromBytes(byte[] msgBytes, ListDivider divider)
         {
             ulong id = BitConverter.ToUInt64(msgBytes, 7);
             ulong origin = BitConverter.ToUInt64(msgBytes, 15);
@@ -134,7 +134,18 @@ namespace projectAirport.Factory
             for (int i = 0; i < pcc; i++)
                 passangers[i] = BitConverter.ToUInt64(msgBytes, 59 + 8 * cc + 8 * i);
 
-            return new Flight(id, origin, target, takeoffString, landingString, null, null, null, planeId, crew, passangers);
+            Airport from = null;
+            Airport to = null;
+
+            foreach (Airport airport in divider.Airports)
+            {
+                if (airport.ID == origin)
+                    from = airport;
+                if (airport.ID == target)
+                    to = airport;
+            }
+
+            return new Flight(id, from, to, takeoffString, landingString, null, null, null, planeId, crew, passangers);
         }
     }
 

@@ -11,28 +11,27 @@ namespace projectAirport
 
     public class DataSource
     {
-        private static string pathFileFTR = "data/example_data_moje_lotniska.ftr";
-        private static string pathFileJson = "data/things.json";
         public List<Thing> thingList = new List<Thing>();
+        public ListDivider divider = new ListDivider();
 
-        public void FromNetwork() 
+        public void FromNetwork(string file_path) 
         {
             // starting Network Simulator in new thread
-            Thread netSim = new Thread(new ThreadStart(NetworkSimulator));
+            Thread netSim = new Thread(() => NetworkSimulator(file_path));
             netSim.Start();
         }
-        public void FromFile() 
+        public void FromFile(string file_path) 
         {
-            thingList = ReadFile.ConvertToObjects(ReadFile.ReadFileMethod(pathFileFTR));
+            thingList = ReadFile.ConvertToObjects(ReadFile.ReadFileMethod(file_path), divider);
         }
 
-        private void NetworkSimulator()
+        private void NetworkSimulator(string file_path)
         {
             // creating network simulator
-            NetworkSourceSimulator netSim = new NetworkSourceSimulator(pathFileFTR, 1, 1);
+            NetworkSourceSimulator netSim = new NetworkSourceSimulator(file_path, 501, 1000);
 
             // adding event handler
-            ReadNetwork reader1 = new ReadNetwork(thingList);
+            ReadNetwork reader1 = new ReadNetwork(thingList, divider);
             netSim.OnNewDataReady += reader1.MessageHandler;
 
             // starting serwer thread

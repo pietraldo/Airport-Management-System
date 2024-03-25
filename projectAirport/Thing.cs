@@ -180,8 +180,8 @@ namespace projectAirport
 
     public class Flight : Thing
     {
-        protected UInt64 origin;
-        protected UInt64 target;
+        protected Airport? origin;
+        protected Airport? target;
         protected string takeOffTime;
         protected string landingTime;
         protected Single? longitude;
@@ -190,8 +190,8 @@ namespace projectAirport
         protected UInt64 plainId;
         protected UInt64[] crewId;
         protected UInt64[] loadId;
-        public UInt64 Origin { get { return origin; } set { origin = value; } }
-        public UInt64 Target { get { return target; } set { target = value; } }
+        public Airport? Origin { get { return origin; } set { origin = value; } }
+        public Airport? Target { get { return target; } set { target = value; } }
         public string TakeOffTime { get { return takeOffTime; } set { takeOffTime = value; } }
         public string LandingTime { get { return landingTime; } set { landingTime = value; } }
         public Single? Longitude { get { return longitude; } set { longitude = value; } }
@@ -201,7 +201,7 @@ namespace projectAirport
         public UInt64[] CrewId { get { return crewId; } set { crewId = value; } }
         public UInt64[] LoadId { get { return loadId; } set { loadId = value; } }
 
-        public Flight(UInt64 id, UInt64 origin, UInt64 target, string takeOffTime, string landingTime,
+        public Flight(UInt64 id, Airport? origin, Airport? target, string takeOffTime, string landingTime,
             float? longitude, float? latitude, float? amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
         {
             Origin = origin;
@@ -221,7 +221,7 @@ namespace projectAirport
         }
         public override void devideList(ListDivider lsd) { lsd.AddFlights(this); }
 
-        public bool UpdatePosition(Airport airStart, Airport airEnd,double currentTime)
+        public bool UpdatePosition(double currentTime)
         {
             TimeOnly start = new TimeOnly();
             TimeOnly end = new TimeOnly();
@@ -243,23 +243,19 @@ namespace projectAirport
             // plane don't fly now
             if (!(startSec <= currentTime && endSec >= currentTime))
             {
-                if (endSec < currentTime && latitude!=100f && (latitude != airEnd.Latitude || longitude != airEnd.Longitude))
-                {
-                    latitude = airEnd.Latitude;
-                    longitude = airEnd.Longitude;
-                    return true;
-                }
+                // show outside the map
                 latitude = 100;
-                return true;
+                longitude = 100;
+                return FlightSimulator.ShowOnlyFlyingPlanes;
             }
 
             double procTimePassed = (currentTime - startSec) / duration;
 
-            float distx =  airEnd.Longitude - airStart.Longitude;
-            float disty =  airEnd.Latitude - airStart.Latitude;
+            float distx =  target.Longitude - origin.Longitude;
+            float disty =  target.Latitude - origin.Latitude;
 
-            longitude = (float)(airStart.Longitude + procTimePassed * distx);
-            latitude = (float)(airStart.Latitude + procTimePassed * disty);
+            longitude = (float)(origin.Longitude + procTimePassed * distx);
+            latitude = (float)(origin.Latitude + procTimePassed * disty);
 
             return true;
         }

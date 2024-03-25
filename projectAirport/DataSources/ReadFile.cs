@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DynamicData;
 using projectAirport.Factory;
 
 namespace projectAirport.DataSources
@@ -42,14 +43,19 @@ namespace projectAirport.DataSources
             }
             return readedLines;
         }
-        public static List<Thing> ConvertToObjects(List<string[]> stringList)
+        public static List<Thing> ConvertToObjects(List<string[]> stringList,ListDivider divider)
         {
             List<Thing> objects = new List<Thing>();
 
             foreach (string[] str in stringList)
             {
                 if (factoryFunctions.ContainsKey(str[0]))
-                    objects.Add(factoryFunctions[str[0]].makeObjectFromString(str));
+                {
+                    Thing thing = factoryFunctions[str[0]].makeObjectFromString(str, divider);
+                    objects.Add(thing);
+                    thing.devideList(divider);
+                }
+                    
             }
 
             return objects;
