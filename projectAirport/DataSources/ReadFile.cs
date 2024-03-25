@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using projectAirport.Factory;
 
-namespace projectAirport
+namespace projectAirport.DataSources
 {
     internal class ReadFile
     {
@@ -25,7 +25,7 @@ namespace projectAirport
             List<string[]> readedLines = new List<string[]>();
             if (File.Exists(filePath))
             {
-                List<Object> crews = new List<Object>();
+                List<object> crews = new List<object>();
                 using (StreamReader reader = new StreamReader(filePath))
                 {
                     string? line;

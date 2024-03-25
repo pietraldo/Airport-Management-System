@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace projectAirport
+namespace projectAirport.DataSources
 {
     using NetworkSourceSimulator;
     using projectAirport.Factory;
@@ -32,7 +32,11 @@ namespace projectAirport
             byte[] msgBytes = msg.MessageBytes;
             string type = Encoding.ASCII.GetString(msgBytes, 0, 3);
 
-            thingList.Add(factoryFunctions[type].makeObjectFromBytes(msgBytes));
+            lock (thingList)
+            {
+                thingList.Add(factoryFunctions[type].makeObjectFromBytes(msgBytes));
+            }
+
         }
         public void MakeSnapshot()
         {

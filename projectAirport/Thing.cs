@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Controls.ApplicationLifetimes;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace projectAirport
         protected UInt64 id;
         public UInt64 ID { get { return id; } set { id = value; } }
 
-        public virtual void devideList(List<Airport> air, List<Flight> fl) { }
+        public abstract void devideList(ListDivider lsd);
         public Thing(UInt64 id)
         {
             ID = id;
@@ -62,6 +63,7 @@ namespace projectAirport
             Practice = practice;
             Role = role;
         }
+        public override void devideList(ListDivider lsd) { lsd.AddCrews(this); }
     }
 
     public class Passenger : Person
@@ -76,6 +78,7 @@ namespace projectAirport
             Class = classe;
             Miles = miles;
         }
+        public override void devideList(ListDivider lsd) { lsd.AddPassengers(this); }
     }
 
     public class Cargo : Thing
@@ -94,8 +97,9 @@ namespace projectAirport
             Code = code;
             Description = description;
         }
+        public override void devideList(ListDivider lsd) { lsd.AddCargos(this); }
     }
-    public class Plane : Thing
+    public abstract class Plane : Thing
     {
         protected string serial;
         protected string country;
@@ -122,6 +126,7 @@ namespace projectAirport
         {
             MaxLoad = maxLoad;
         }
+        public override void devideList(ListDivider lsd) { lsd.AddCargoPlanes(this); }
     }
 
     public class PassengerPlane : Plane
@@ -141,6 +146,7 @@ namespace projectAirport
             BuisnessClassSize = buisnessClassSize;
             EconomyClassSize = economyClassSize;
         }
+        public override void devideList(ListDivider lsd) { lsd.AddPassengerPlanes(this); }
     }
 
     public class Airport : Thing
@@ -169,7 +175,7 @@ namespace projectAirport
             Amls = amls;
             Country = country;
         }
-        public override void devideList(List<Airport> air, List<Flight> fl) { air.Add(this); }
+        public override void devideList(ListDivider lsd) { lsd.AddAirports(this); }
     }
 
     public class Flight : Thing
@@ -213,7 +219,7 @@ namespace projectAirport
             for (int i = 0; i < loadId.Length; i++)
                 LoadId[i] = loadId[i];
         }
-        public override void devideList(List<Airport> air, List<Flight> fl) { fl.Add(this); }
+        public override void devideList(ListDivider lsd) { lsd.AddFlights(this); }
 
         public bool UpdatePosition(Airport airStart, Airport airEnd,double currentTime)
         {
@@ -237,8 +243,14 @@ namespace projectAirport
             // plane don't fly now
             if (!(startSec <= currentTime && endSec >= currentTime))
             {
+                if (endSec < currentTime && latitude!=100f && (latitude != airEnd.Latitude || longitude != airEnd.Longitude))
+                {
+                    latitude = airEnd.Latitude;
+                    longitude = airEnd.Longitude;
+                    return true;
+                }
                 latitude = 100;
-                return false;
+                return true;
             }
 
             double procTimePassed = (currentTime - startSec) / duration;

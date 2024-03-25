@@ -12,6 +12,7 @@ namespace projectAirport
     using BruTile.Wms;
     using Mapsui.Extensions;
     using Mapsui.Projections;
+    using Microsoft.VisualBasic;
     using NetTopologySuite.Geometries;
     using NetworkSourceSimulator;
     using System.Data;
@@ -19,112 +20,64 @@ namespace projectAirport
 
     internal class Program
     {
-        public static void expample()
-        {
-            FlightsGUIData flightsGUI = new FlightsGUIData();
-
-            int x = 0;
-            int y = 0;
-            int dirx = 1;
-            int diry = -1;
-            int vx = 2;
-            int vy = 2;
-            int rot = 0;
-            ulong id = 0;
-
-           
-            while (true)
-            {
-                List<FlightGUI> lista = new List<FlightGUI>();
-                FlightGUI flightGUI = new FlightGUI { ID = id, WorldPosition = new WorldPosition(y, x), MapCoordRotation = rot++ % 90 };
-                lista.Add(flightGUI);
-                (double, double) pos = SphericalMercator.FromLonLat(x, y);
-
-
-
-                flightsGUI.UpdateFlights(lista);
-
-                Runner.UpdateGUI(flightsGUI);
-                Thread.Sleep(1);
-
-                Random random = new Random();
-                x += random.Next() % 5 * dirx;
-                y += random.Next() % 5 * diry;
-
-                if (x >= 180)
-                    dirx *= -1;
-                if (x <= -180)
-                    dirx *= -1;
-
-                if (y >= 90)
-                    diry *= -1;
-                if (y <= -90)
-                    diry *= -1;
-            }
-        }
-        private static string pathFileFTR = "data/example_data.ftr";
-        private static string pathFileJson = "data/things.json";
-        private static List<Thing> thingList = new List<Thing>();
-
         static void Main(string[] args)
         {
-            // Running graphical aplication
-            Thread apka = new Thread(new ThreadStart(Runner.Run));
-            apka.Start();
 
-            // Getting all objects
-            List<Thing> things = ReadFile.ConvertToObjects(ReadFile.ReadFileMethod(pathFileFTR));
+            //Thread planesThread = new Thread(showPlanes);
+            //planesThread.Start();
+            //// creating network simulator
+            //NetworkSourceSimulator netSim = new NetworkSourceSimulator(pathFileFTR, 1, 1);
+
+            //// adding event handler
+            //ReadNetwork reader1 = new ReadNetwork(thingList);
+            //netSim.OnNewDataReady += reader1.MessageHandler;
+
+            //// starting serwer thread
+            //Thread tcpSerwer = new Thread(new ThreadStart(netSim.Run)) { IsBackground = true };
+            //tcpSerwer.Start();
+
+            //// reading user commends
+            //string asw;
+            //while ((asw = Console.ReadLine()) != "exit")
+            //{
+            //    if (asw == "print")
+            //    {
+            //        reader1.MakeSnapshot();
+            //    }
+            //}
+            DataSource dataSource = new DataSource();
+            dataSource.FromFile();
+
+            ListDivider divider = new ListDivider();
+            lock (dataSource.thingList)
+            {
+                foreach (Thing thing in dataSource.thingList)
+                {
+                    thing.devideList(divider);
+                }
+            }
+
+            FlightSimulator flightSimulator = new FlightSimulator();
+
             
-            List<Airport> airportList = new List<Airport>();
-            List<Flight> flights = new List<Flight>();
-            foreach (Thing thing in things)
-            {
-                thing.devideList(airportList, flights);
-            }
-
-
-            List<(Flight, (Airport, Airport))> ff = new List<(Flight, (Airport, Airport))>();
-            foreach (Flight flight in flights)
-            {
-                Airport from = null;
-                Airport to = null;
-                foreach (Airport airport in airportList)
-                {
-                    if (flight.Origin == airport.ID)
-                    { from = airport; }
-                    if (flight.Target == airport.ID)
-                    { to = airport; }
-                }
-                ff.Add((flight, (from, to)));
-            }
-            DateTime currentHour = DateTime.Now.Date;
-            double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
-            float speed = 3600;
-
-            FlightsGUIData flightsGUI = new FlightsGUIData();
-            while (true)
-            {
-                List<FlightGUI> lista = new List<FlightGUI>();
-                foreach (var flight in ff)
-                {
-                    if (flight.Item1.UpdatePosition(flight.Item2.Item1, flight.Item2.Item2, currentTime))
-                    {
-                        AdapterFlightGui adp = new AdapterFlightGui(flight.Item1, flight.Item2.Item1, flight.Item2.Item2);
-                        lista.Add(adp);
-                    }
-
-                }
-
-                Console.WriteLine($"{DateTime.Now.Date.AddSeconds(currentTime).Hour}:{DateTime.Now.Date.AddSeconds(currentTime).Minute}");
-                
-                
-                flightsGUI.UpdateFlights(lista);
-
-                Runner.UpdateGUI(flightsGUI);
-                Thread.Sleep(10);
-                currentTime += speed/100;
-
-            }
+            flightSimulator.ShowPlanes(divider.Flights, divider.Airports);
+               
+            
+            
+            
+            //while(true)
+            //{
+            //    ListDivider divider = new ListDivider();
+            //    lock (dataSource.thingList)
+            //    {
+            //        foreach (Thing thing in dataSource.thingList)
+            //        {
+            //            thing.devideList(divider);
+            //        }
+            //    }
+            //    Console.WriteLine(  );
+            //}
+            
 
 
         }
