@@ -11,5 +11,13 @@ namespace projectAirport
     {
         string name = name;
         public string Name { get { return name; } }
+
+        public string Report(IReportable reportable)
+        {
+            return reportable.Report(this);
+        }
+        public abstract string ReportCargoPlane(CargoPlane cargoPlane);
+        public abstract string ReportPassangerPlane(PassengerPlane passangerPlane);
+        public abstract string ReportAirport(Airport airport);
     }
 }

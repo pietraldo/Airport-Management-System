@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace projectAirport
 {
-    public class Airport : Thing
+    public class Airport : Thing, IReportable
     {
         protected string name;
         protected string code;
@@ -33,5 +33,9 @@ namespace projectAirport
             Country = country;
         }
         public override void devideList(ListDivider lsd) { lsd.AddAirports(this); }
+        public string Report(Media media)
+        {
+            return media.ReportAirport(this);
+        }
     }
 }

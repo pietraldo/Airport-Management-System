@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace projectAirport
 {
-    public abstract class Plane : Thing
+    public abstract class Plane : Thing, IReportable
     {
         protected string serial;
         protected string country;
@@ -21,6 +21,8 @@ namespace projectAirport
             Country = country;
             Model = model;
         }
+
+        public abstract string Report(Media media);
     }
 
     public class CargoPlane : Plane
@@ -34,6 +36,10 @@ namespace projectAirport
             MaxLoad = maxLoad;
         }
         public override void devideList(ListDivider lsd) { lsd.AddCargoPlanes(this); }
+        public override string Report(Media media)
+        {
+            return media.ReportCargoPlane(this);
+        }
     }
 
     public class PassengerPlane : Plane
@@ -54,5 +60,10 @@ namespace projectAirport
             EconomyClassSize = economyClassSize;
         }
         public override void devideList(ListDivider lsd) { lsd.AddPassengerPlanes(this); }
+
+        public override string Report(Media media)
+        {
+            return media.ReportPassangerPlane(this);
+        }
     }
 }

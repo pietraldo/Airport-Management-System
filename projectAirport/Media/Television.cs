@@ -11,5 +11,20 @@ namespace projectAirport
         public Television(string name) : base(name)
         {
         }
+
+        public override string ReportAirport(Airport airport)
+        {
+            return "Airport television";
+        }
+
+        public override string ReportCargoPlane(CargoPlane cargoPlane)
+        {
+            return "Cargo television";
+        }
+
+        public override string ReportPassangerPlane(PassengerPlane passangerPlane)
+        {
+            return "Passanger television";
+        }
     }
 }

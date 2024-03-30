@@ -26,15 +26,23 @@ namespace projectAirport
             DataSource dataSource = new DataSource();
             dataSource.FromFile("data/example_data.ftr");
 
-            // starting simulation
-            FlightSimulator flightSimulator = new FlightSimulator();
-            while (true)
+            Television abelowa = new Television("Abelowa");
+            Radio shmen = new Radio("Shmen");
+
+            List<Media> media = new List<Media>();
+            media.Add(abelowa);
+            media.Add(shmen);
+
+            List<IReportable> reportables = new List<IReportable>();
+            reportables.Add(dataSource.divider.Airports.First());
+            reportables.Add(dataSource.divider.PassengerPlanes.First());
+
+            foreach (Media mediaItem in media)
             {
-                lock (dataSource.thingList)
+                foreach(IReportable ir in reportables)
                 {
-                    flightSimulator.ShowPlanes(dataSource.divider.Flights);
+                    Console.WriteLine(mediaItem.Report(ir));
                 }
-                Thread.Sleep(1000);
             }
 
         }
