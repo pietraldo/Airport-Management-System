@@ -24,7 +24,7 @@ namespace projectAirport
         {
             // getting data
             DataSource dataSource = new DataSource();
-            dataSource.FromNetwork("data/example_data.ftr", 1,1);
+            dataSource.FromFile("data/example_data.ftr");
 
             // starting simulation
             FlightSimulator flightSimulator = new FlightSimulator();
