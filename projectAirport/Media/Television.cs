@@ -14,17 +14,17 @@ namespace projectAirport
 
         public override string ReportAirport(Airport airport)
         {
-            return "Airport television";
+            return $"An image of {airport.Name} airport";
         }
 
         public override string ReportCargoPlane(CargoPlane cargoPlane)
         {
-            return "Cargo television";
+            return $"An image of {cargoPlane.Model} cargo plane";
         }
 
         public override string ReportPassangerPlane(PassengerPlane passangerPlane)
         {
-            return "Passanger television";
+            return $"An image of {passangerPlane.Model} passanger plane";
         }
     }
 }

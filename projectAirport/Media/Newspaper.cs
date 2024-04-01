@@ -13,17 +13,17 @@ namespace projectAirport
         }
         public override string ReportAirport(Airport airport)
         {
-            return "Airport newspaper";
+            return $"{Name} - A report from the {airport.Name} airport {airport.Country}.";
         }
 
         public override string ReportCargoPlane(CargoPlane cargoPlane)
         {
-            return "Cargo newspaper";
+            return $"{Name} - An interview with the crew of {cargoPlane.Serial}.";
         }
 
         public override string ReportPassangerPlane(PassengerPlane passangerPlane)
         {
-            return "Passanger newspaper";
+            return $"{Name} - Breaking news! {passangerPlane.Model} aircreaft loses EASA fails certification after inspection of {passangerPlane.Serial}.";
         }
     }
 }

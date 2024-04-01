@@ -16,6 +16,7 @@ namespace projectAirport
     using NetTopologySuite.Geometries;
     using NetworkSourceSimulator;
     using System.Data;
+    using System.Linq;
     using System.Text;
 
     internal class Program
@@ -37,20 +38,19 @@ namespace projectAirport
                 new Newspaper("Dziennik Polityczny")
             };
 
-
+            // creating list of reportables
             List<IReportable> reportables = new List<IReportable>();
-            reportables.Add(dataSource.divider.Airports.First());
-            reportables.Add(dataSource.divider.PassengerPlanes.First());
+            reportables = reportables.Concat(dataSource.divider.Airports)
+                .Concat(dataSource.divider.CargoPlanes)
+                .Concat(dataSource.divider.PassengerPlanes).ToList();
 
+            // generating news
             NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
             string? news;
             while ((news = newsGenerator.GenerateNextNews()) != null)
             {
                 Console.WriteLine(news);
             }
-
-
-
         }
     }
 }
