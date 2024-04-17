@@ -5,19 +5,33 @@ namespace projectAirport
 {
     internal class FlightSimulator
     {
-        private FlightsGUIData flightsGUI;
+        private static FlightsGUIData flightsGUI;
         public static bool ShowOnlyFlyingPlanes = false;
-        public FlightSimulator()
+        
+        public static void RunGui(DataSource dataSource)
         {
             // Running graphical interface
             Task apkaTask = Task.Run(() => Runner.Run());
-            
-            
+
             flightsGUI = new FlightsGUIData();
 
+            // updating planes positions
+            Thread simulate_planes = new Thread(() =>
+            {
+                while (true)
+                {
+                    lock (dataSource.thingList)
+                    {
+                        ShowPlanes(dataSource.divider.Flights);
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
+            simulate_planes.IsBackground = true;
+            simulate_planes.Start();
         }
 
-        public void ShowPlanes(List<Flight> flights)
+        private static void ShowPlanes(List<Flight> flights)
         {
             List<FlightGUI> lista = new List<FlightGUI>();
 

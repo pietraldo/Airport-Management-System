@@ -26,22 +26,10 @@ namespace projectAirport
         {
             DataSource dataSource = new DataSource();
             dataSource.FromFile("data/example_data.ftr");
-            
+
             // starting simulation
-            FlightSimulator flightSimulator = new FlightSimulator();
+            FlightSimulator.RunGui(dataSource);
 
-
-            Task simulate_planes =Task.Run(() =>
-            {
-                while (true)
-                {
-                    lock (dataSource.thingList)
-                    {
-                        flightSimulator.ShowPlanes(dataSource.divider.Flights);
-                    }
-                    Thread.Sleep(1000);
-                }
-            });
 
             // creating medias
             List<Media> media = Media.CreateMedia();
@@ -60,17 +48,13 @@ namespace projectAirport
                 {
                     dataSource.MakeSnapshot();
                 }
-                if(asw=="raport")
+                if (asw == "raport")
                 {
                     NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
                     newsGenerator.PrintAllNews();
                 }
             }
             Console.WriteLine("exiting...");
-
-
-
-
         }
     }
 }
