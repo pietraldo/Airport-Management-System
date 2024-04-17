@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DynamicData.Kernel;
+using NetworkSourceSimulator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +14,8 @@ namespace projectAirport
         protected Airport? target;
         protected string takeOffTime;
         protected string landingTime;
-        protected Single? longitude;
-        protected Single? latitude;
+        protected Single longitude;
+        protected Single latitude;
         protected Single? amls;
         protected UInt64 plainId;
         protected UInt64[] crewId;
@@ -22,8 +24,8 @@ namespace projectAirport
         public Airport? Target { get { return target; } set { target = value; } }
         public string TakeOffTime { get { return takeOffTime; } set { takeOffTime = value; } }
         public string LandingTime { get { return landingTime; } set { landingTime = value; } }
-        public Single? Longitude { get { return longitude; } set { longitude = value; } }
-        public Single? Latitude { get { return latitude; } set { latitude = value; } }
+        public Single Longitude { get { return longitude; } set { longitude = value; } }
+        public Single Latitude { get { return latitude; } set { latitude = value; } }
         public Single? Amls { get { return amls; } set { amls = value; } }
         public UInt64 PlainId { get { return plainId; } set { plainId = value; } }
         public UInt64[] CrewId { get { return crewId; } set { crewId = value; } }
@@ -36,8 +38,14 @@ namespace projectAirport
             Target = target;
             TakeOffTime = takeOffTime;
             LandingTime = landingTime;
-            Longitude = longitude;
-            Latitude = latitude;
+            if (longitude == null)
+                Longitude = origin.Longitude;
+            else
+                Longitude = (float)longitude;
+            if (latitude == null)
+                Latitude = origin.Latitude;
+            else
+                Latitude = (float)latitude;
             Amls = amls;
             PlainId = plainId;
             CrewId = new ulong[crewId.Length];
@@ -49,6 +57,8 @@ namespace projectAirport
         }
         public override void devideList(ListDivider lsd) { lsd.AddFlights(this); }
 
+        //double currentTime=(DateTime.Now - DateTime.Now.Date).TotalSeconds;
+        //float speed = 36;
         public bool UpdatePosition()
         {
             TimeOnly start = new TimeOnly();
@@ -56,6 +66,7 @@ namespace projectAirport
             TimeOnly.TryParse(takeOffTime, out start);
             TimeOnly.TryParse(landingTime, out end);
 
+            //currentTime += speed;
             double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
 
             double startSec = (start - new TimeOnly(0, 0)).TotalSeconds;
@@ -64,26 +75,46 @@ namespace projectAirport
             // if start is later than end
             if (startSec > endSec) endSec += 24 * 3600;
 
-
-            // plane don't fly now
+            // plane that don't fly now
             if (!(startSec <= currentTime && endSec >= currentTime))
             {
-                // show outside the map
-                latitude = 100;
-                longitude = 100;
+                // didn't start => show on starting airport
+                if(startSec > currentTime)
+                {
+                    latitude = origin.Latitude;
+                    longitude = origin.Longitude;
+                }
+                else // finished => show on end airport
+                {
+                    latitude = target.Latitude;
+                    longitude = target.Longitude;
+                }
+                
                 return FlightSimulator.ShowOnlyFlyingPlanes;
             }
 
-            double duration = endSec - startSec;
-            double procTimePassed = (currentTime - startSec) / duration;
+            
+            double timeLeft = endSec-currentTime;
 
-            float distx = target.Longitude - origin.Longitude;
-            float disty = target.Latitude - origin.Latitude;
 
-            longitude = (float)(origin.Longitude + procTimePassed * distx);
-            latitude = (float)(origin.Latitude + procTimePassed * disty);
+            float distx = target.Longitude - longitude;
+            float disty = target.Latitude - latitude;
+
+            longitude += (float)(distx / timeLeft);
+            latitude+=(float)(disty / timeLeft);
 
             return true;
+        }
+
+        public void UpdatePosition(PositionUpdateArgs args)
+        {
+            if (args.ObjectID != id) return;
+
+            longitude = args.Longitude;
+            latitude = args.Latitude;
+            amls = args.AMSL;
+
+            Console.WriteLine("samolot");
         }
     }
 }

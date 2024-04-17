@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkSourceSimulator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,16 @@ namespace projectAirport
         public string Report(Media media)
         {
             return media.ReportAirport(this);
+        }
+        public void UpdatePosition(PositionUpdateArgs args)
+        {
+            if (args.ObjectID != id) return;
+
+            longitude = args.Longitude;
+            latitude = args.Latitude;
+            amls = args.AMSL;
+
+            Console.WriteLine("airport");
         }
     }
 }

@@ -21,6 +21,10 @@ namespace projectAirport
 
                 // creating network simulator
                 NetworkSourceSimulator netSim = new NetworkSourceSimulator(file_path, min_time, max_time);
+                
+                NetworkEventHandler netSimEventHandler = new NetworkEventHandler(this);
+                netSim.OnIDUpdate += netSimEventHandler.IDUpdateHandler;
+                netSim.OnPositionUpdate += netSimEventHandler.PositionUpdateHandler;
 
                 // adding event handler
                 ReadNetwork reader1 = new ReadNetwork(thingList, divider);
@@ -40,7 +44,7 @@ namespace projectAirport
         public void MakeSnapshot()
         {
             string snapName = $"data/snapshot_{DateTime.Now:HH_mm_ss}.json";
-
+            Console.WriteLine(thingList.Count);
             Serialization.SerializeJson(thingList, snapName);
         }
     }

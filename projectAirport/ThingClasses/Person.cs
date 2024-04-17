@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkSourceSimulator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,15 @@ namespace projectAirport
             Age = age;
             Phone = phone;
             Email = email;
+        }
+        public void UpdateContactInfo(ContactInfoUpdateArgs args)
+        {
+            if (args.ObjectID != id) return;
+
+            phone=args.PhoneNumber;
+            email = args.EmailAddress;
+
+            Console.WriteLine("contact");
         }
     }
 

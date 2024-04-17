@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="data\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FlightTrackerGUI" Version="1.0.0" />
   </ItemGroup>
 
@@ -22,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="data\example.ftre">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="data\example_data.ftr">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

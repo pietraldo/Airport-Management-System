@@ -1,7 +1,9 @@
 ﻿using Avalonia.Controls.ApplicationLifetimes;
+using NetworkSourceSimulator;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Reactive;
 using System.Text;
@@ -27,6 +29,14 @@ namespace projectAirport
         public Thing(UInt64 id)
         {
             ID = id;
+        }
+
+        public void IDUpdateMethod(IDUpdateArgs args)
+        {
+            if(id==args.ObjectID)
+            {
+                id=args.NewObjectID;
+            }
         }
     }
 }

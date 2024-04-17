@@ -16,7 +16,7 @@ namespace projectAirport
             WorldPosition = new WorldPosition((double)flight.Latitude, (double)flight.Longitude);
 
 
-            (double start_x, double start_y) = SphericalMercator.FromLonLat(flight.Origin.Longitude, flight.Origin.Latitude);
+            (double start_x, double start_y) = SphericalMercator.FromLonLat(flight.Longitude, flight.Latitude);
             (double end_x, double end_y) = SphericalMercator.FromLonLat(flight.Target.Longitude, flight.Target.Latitude);
             double distX = end_x - start_x;
             double distY = end_y - start_y;
