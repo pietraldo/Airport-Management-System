@@ -41,12 +41,7 @@ namespace projectAirport.DataSources
             }
 
         }
-        public void MakeSnapshot()
-        {
-            string snapName = $"data/snapshot_{DateTime.Now:HH_mm_ss}.json";
-
-            Serialization.SerializeJson(thingList, snapName);
-        }
+        
 
     }
 }

@@ -30,22 +30,18 @@ namespace projectAirport
                 Thread tcpSerwer = new Thread(new ThreadStart(netSim.Run)) { IsBackground = true };
                 tcpSerwer.Start();
 
-                // reading user commends
-                string? asw;
-                while ((asw = Console.ReadLine()) != "exit")
-                {
-                    if (asw == "print")
-                    {
-                        reader1.MakeSnapshot();
-                    }
-                }
-
             });
             netSim.Start();
         }
         public void FromFile(string file_path) 
         {
             thingList = ReadFile.ConvertToObjects(ReadFile.ReadFileMethod(file_path), divider);
+        }
+        public void MakeSnapshot()
+        {
+            string snapName = $"data/snapshot_{DateTime.Now:HH_mm_ss}.json";
+
+            Serialization.SerializeJson(thingList, snapName);
         }
     }
 }

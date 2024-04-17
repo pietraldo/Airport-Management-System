@@ -10,10 +10,11 @@ namespace projectAirport
         public FlightSimulator()
         {
             // Running graphical interface
-            Thread apka = new Thread(new ThreadStart(Runner.Run));
-            apka.Start();
-
+            Task apkaTask = Task.Run(() => Runner.Run());
+            
+            
             flightsGUI = new FlightsGUIData();
+
         }
 
         public void ShowPlanes(List<Flight> flights)

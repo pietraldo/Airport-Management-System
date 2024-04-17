@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 namespace projectAirport
 {
     using BruTile.Wms;
+    using ExCSS;
     using Mapsui.Extensions;
     using Mapsui.Projections;
     using Microsoft.VisualBasic;
@@ -23,20 +24,27 @@ namespace projectAirport
     {
         static void Main(string[] args)
         {
-            // getting data
             DataSource dataSource = new DataSource();
             dataSource.FromFile("data/example_data.ftr");
+            
+            // starting simulation
+            FlightSimulator flightSimulator = new FlightSimulator();
+
+
+            Task simulate_planes =Task.Run(() =>
+            {
+                while (true)
+                {
+                    lock (dataSource.thingList)
+                    {
+                        flightSimulator.ShowPlanes(dataSource.divider.Flights);
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
 
             // creating medias
-            List<Media> media = new List<Media>()
-            {
-                new Television("Telewizja Abelowa"),
-                new Television("Kanał TV-tensor"),
-                new Radio("Radio Kwantyfikator"),
-                new Radio("Radio Shmen"),
-                new Newspaper("Gazeta Kategoryczna"),
-                new Newspaper("Dziennik Polityczny")
-            };
+            List<Media> media = Media.CreateMedia();
 
             // creating list of reportables
             List<IReportable> reportables = new List<IReportable>();
@@ -44,13 +52,25 @@ namespace projectAirport
                 .Concat(dataSource.divider.CargoPlanes)
                 .Concat(dataSource.divider.PassengerPlanes).ToList();
 
-            // generating news
-            NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
-            string? news;
-            while ((news = newsGenerator.GenerateNextNews()) != null)
+
+            string asw = "";
+            while ((asw = Console.ReadLine()) != "exit")
             {
-                Console.WriteLine(news);
+                if (asw == "print")
+                {
+                    dataSource.MakeSnapshot();
+                }
+                if(asw=="raport")
+                {
+                    NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
+                    newsGenerator.PrintAllNews();
+                }
             }
+            Console.WriteLine("exiting...");
+
+
+
+
         }
     }
 }

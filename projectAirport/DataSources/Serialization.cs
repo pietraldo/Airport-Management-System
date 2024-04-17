@@ -15,7 +15,7 @@ namespace projectAirport
             string jsonString = JsonSerializer.Serialize(lista, options);
 
             File.WriteAllText(fileName, jsonString);
-            Console.WriteLine($"Data writed to file: {fileName}");
+            Console.WriteLine($"Data written to file: {fileName}");
         }
     }
 }
