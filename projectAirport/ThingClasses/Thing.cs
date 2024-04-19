@@ -32,6 +32,12 @@ namespace projectAirport
             ID = id;
         }
 
+        
+        public Thing()
+        {
+           
+        }
+
         public void IDUpdateMethod(IDUpdateArgs args)
         {
             if(id==args.ObjectID)

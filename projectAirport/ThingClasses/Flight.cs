@@ -37,7 +37,7 @@ namespace projectAirport
         public UInt64[] LoadId { get { return loadId; } set { loadId = value; } }
         
 
-        public Flight():base((ulong)new Random().Next(2344523)) { }
+        public Flight() { }
         public Flight(UInt64 id, Airport? origin, Airport? target, string takeOffTime, string landingTime,
     Single? longitude, Single? latitude, Single? amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
         {
