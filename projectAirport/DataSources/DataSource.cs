@@ -25,6 +25,7 @@ namespace projectAirport
                 NetworkEventHandler netSimEventHandler = new NetworkEventHandler(this);
                 netSim.OnIDUpdate += netSimEventHandler.IDUpdateHandler;
                 netSim.OnPositionUpdate += netSimEventHandler.PositionUpdateHandler;
+                netSim.OnContactInfoUpdate += netSimEventHandler.ContactInfoUpdateHandler;
 
                 // adding event handler
                 ReadNetwork reader1 = new ReadNetwork(thingList, divider);

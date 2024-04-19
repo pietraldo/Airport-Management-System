@@ -18,35 +18,43 @@ namespace projectAirport
         public void IDUpdateHandler(object sender, IDUpdateArgs args)
         {
             Console.WriteLine($"Change Id: {args.ObjectID} {args.NewObjectID}");
-            
+
             foreach (var item in _dataSource.thingList)
             {
-                lock (item)
+                if (item.ID == args.ObjectID)
                 {
                     item.IDUpdateMethod(args);
+                    return;
                 }
-                
             }
-           
+            DataLogger.LogToFile($"Operacja UpdateId na objekcie {args.ObjectID} nie możliwa do zrealizowania");
         }
-        
+
         public void PositionUpdateHandler(object sender, PositionUpdateArgs args)
         {
             Console.WriteLine($"Position Change: {args.ObjectID}");
             foreach (var item in _dataSource.divider.Flights)
             {
-                lock (item)
+                if (item.ID == args.ObjectID)
                 {
                     item.UpdatePosition(args);
+                    return;
                 }
+                   
+                
             }
             foreach (var item in _dataSource.divider.Airports)
             {
-                lock (item)
+
+                if (item.ID == args.ObjectID)
                 {
                     item.UpdatePosition(args);
+                    return;
                 }
+                
+                
             }
+            DataLogger.LogToFile($"Operacja UpdatePosition na objekcie {args.ObjectID} nie możliwa do zrealizowania");
         }
 
         public void ContactInfoUpdateHandler(object sender, ContactInfoUpdateArgs args)
@@ -54,18 +62,25 @@ namespace projectAirport
             Console.WriteLine($"Contact Change: {args.ObjectID}");
             foreach (var item in _dataSource.divider.Passengers)
             {
-                lock (item)
+                if (item.ID == args.ObjectID)
                 {
                     item.UpdateContactInfo(args);
+                    return;
                 }
+                
+                
             }
             foreach (var item in _dataSource.divider.Crews)
             {
-                lock (item)
+                if (item.ID == args.ObjectID)
                 {
                     item.UpdateContactInfo(args);
+                    return;
                 }
+                
+                
             }
+            DataLogger.LogToFile($"Operacja UpdateContactInfo na objekcie {args.ObjectID} nie możliwa do zrealizowania");
         }
     }
 }

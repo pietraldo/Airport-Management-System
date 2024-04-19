@@ -56,12 +56,12 @@ namespace projectAirport
     {
         protected string classe;
         protected UInt64 miles;
-        public string Class { get { return classe; } set { classe = value; } }
+        public string Classs { get { return classe; } set { classe = value; } }
         public UInt64 Miles { get { return miles; } set { miles = value; } }
 
-        public Passenger(UInt64 id, string name, ulong age, string phone, string email, string classe, ulong miles) : base(id, name, age, phone, email)
+        public Passenger(UInt64 id, string name, ulong age, string phone, string email, string classs, ulong miles) : base(id, name, age, phone, email)
         {
-            Class = classe;
+            Classs = classs;
             Miles = miles;
         }
         public override void devideList(ListDivider lsd) { lsd.AddPassengers(this); }

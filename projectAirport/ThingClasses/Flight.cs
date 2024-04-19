@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace projectAirport
@@ -14,25 +16,30 @@ namespace projectAirport
         protected Airport? target;
         protected string takeOffTime;
         protected string landingTime;
-        protected Single longitude;
-        protected Single latitude;
+        protected Single? longitude;
+        protected Single? latitude;
         protected Single? amls;
         protected UInt64 plainId;
         protected UInt64[] crewId;
         protected UInt64[] loadId;
+        //[JsonIgnore]
         public Airport? Origin { get { return origin; } set { origin = value; } }
+        //[JsonPropertyName("Origin")]
+        //public ulong? IdOrigin => Origin != null ? Origin.ID : null;
         public Airport? Target { get { return target; } set { target = value; } }
         public string TakeOffTime { get { return takeOffTime; } set { takeOffTime = value; } }
         public string LandingTime { get { return landingTime; } set { landingTime = value; } }
-        public Single Longitude { get { return longitude; } set { longitude = value; } }
-        public Single Latitude { get { return latitude; } set { latitude = value; } }
+        public Single? Longitude { get { return longitude; } set { longitude = value; } }
+        public Single? Latitude { get { return latitude; } set { latitude = value; } }
         public Single? Amls { get { return amls; } set { amls = value; } }
         public UInt64 PlainId { get { return plainId; } set { plainId = value; } }
         public UInt64[] CrewId { get { return crewId; } set { crewId = value; } }
         public UInt64[] LoadId { get { return loadId; } set { loadId = value; } }
+        
 
+        public Flight():base((ulong)new Random().Next(2344523)) { }
         public Flight(UInt64 id, Airport? origin, Airport? target, string takeOffTime, string landingTime,
-            float? longitude, float? latitude, float? amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
+    Single? longitude, Single? latitude, Single? amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
         {
             Origin = origin;
             Target = target;
@@ -55,6 +62,8 @@ namespace projectAirport
             for (int i = 0; i < loadId.Length; i++)
                 LoadId[i] = loadId[i];
         }
+ 
+        
         public override void devideList(ListDivider lsd) { lsd.AddFlights(this); }
 
         //double currentTime=(DateTime.Now - DateTime.Now.Date).TotalSeconds;
@@ -97,8 +106,8 @@ namespace projectAirport
             double timeLeft = endSec-currentTime;
 
 
-            float distx = target.Longitude - longitude;
-            float disty = target.Latitude - latitude;
+            float distx = (float)(target.Longitude - longitude);
+            float disty =(float)( target.Latitude - latitude);
 
             longitude += (float)(distx / timeLeft);
             latitude+=(float)(disty / timeLeft);
@@ -110,11 +119,18 @@ namespace projectAirport
         {
             if (args.ObjectID != id) return;
 
+            string log_przed = $"Pozycja: ({longitude}, {latitude}, {amls})";
+
             longitude = args.Longitude;
             latitude = args.Latitude;
             amls = args.AMSL;
 
             Console.WriteLine("samolot");
+
+            string log_po = $"Pozycja: ({longitude}, {latitude}, {amls})";
+
+            string log = $"Id: {id}, Zmiana pozycji. {log_przed} -> {log_po}";
+            DataLogger.LogToFile(log);
         }
     }
 }
