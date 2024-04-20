@@ -20,7 +20,7 @@ namespace projectAirport
             {
                 while (true)
                 {
-                    lock (dataSource.thingList)
+                    lock (dataSource)
                     {
                         ShowPlanes(dataSource.divider.Flights);
                     }

@@ -28,7 +28,7 @@ namespace projectAirport
                 netSim.OnContactInfoUpdate += netSimEventHandler.ContactInfoUpdateHandler;
 
                 // adding event handler
-                ReadNetwork reader1 = new ReadNetwork(thingList, divider);
+                ReadNetwork reader1 = new ReadNetwork(this);
                 netSim.OnNewDataReady += reader1.MessageHandler;
 
                 // starting serwer thread
@@ -49,7 +49,6 @@ namespace projectAirport
                 Directory.CreateDirectory(dirName);
 
             string snapName = $"{dirName}/snapshot_{DateTime.Now:HH_mm_ss}.json";
-            Console.WriteLine(thingList.Count);
             Serialization.SerializeJson(thingList, snapName);
         }
     }

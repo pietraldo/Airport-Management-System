@@ -17,12 +17,15 @@ namespace projectAirport
 
         public void IDUpdateHandler(object sender, IDUpdateArgs args)
         {
-            foreach (var item in _dataSource.thingList)
+            lock (_dataSource)
             {
-                if (item.ID == args.ObjectID)
+                foreach (var item in _dataSource.thingList)
                 {
-                    item.IDUpdateMethod(args);
-                    return;
+                    if (item.ID == args.ObjectID)
+                    {
+                        item.IDUpdateMethod(args);
+                        return;
+                    }
                 }
             }
             DataLogger.LogToFile($"Operacja UpdateId na objekcie {args.ObjectID} nie możliwa do zrealizowania");
@@ -30,20 +33,23 @@ namespace projectAirport
 
         public void PositionUpdateHandler(object sender, PositionUpdateArgs args)
         {
-            foreach (var item in _dataSource.divider.Flights)
+            lock (_dataSource)
             {
-                if (item.ID == args.ObjectID)
+                foreach (var item in _dataSource.divider.Flights)
                 {
-                    item.UpdatePosition(args);
-                    return;
+                    if (item.ID == args.ObjectID)
+                    {
+                        item.UpdatePosition(args);
+                        return;
+                    }
                 }
-            }
-            foreach (var item in _dataSource.divider.Airports)
-            {
-                if (item.ID == args.ObjectID)
+                foreach (var item in _dataSource.divider.Airports)
                 {
-                    item.UpdatePosition(args);
-                    return;
+                    if (item.ID == args.ObjectID)
+                    {
+                        item.UpdatePosition(args);
+                        return;
+                    }
                 }
             }
             DataLogger.LogToFile($"Operacja UpdatePosition na objekcie {args.ObjectID} nie możliwa do zrealizowania");
@@ -51,26 +57,30 @@ namespace projectAirport
 
         public void ContactInfoUpdateHandler(object sender, ContactInfoUpdateArgs args)
         {
-            foreach (var item in _dataSource.divider.Passengers)
+            lock ( _dataSource)
             {
-                if (item.ID == args.ObjectID)
+                foreach (var item in _dataSource.divider.Passengers)
                 {
-                    item.UpdateContactInfo(args);
-                    return;
+                    if (item.ID == args.ObjectID)
+                    {
+                        item.UpdateContactInfo(args);
+                        return;
+                    }
+
+
                 }
-                
-                
-            }
-            foreach (var item in _dataSource.divider.Crews)
-            {
-                if (item.ID == args.ObjectID)
+                foreach (var item in _dataSource.divider.Crews)
                 {
-                    item.UpdateContactInfo(args);
-                    return;
+                    if (item.ID == args.ObjectID)
+                    {
+                        item.UpdateContactInfo(args);
+                        return;
+                    }
+
+
                 }
-                
-                
             }
+            
             DataLogger.LogToFile($"Operacja UpdateContactInfo na objekcie {args.ObjectID} nie możliwa do zrealizowania");
         }
     }

@@ -11,10 +11,9 @@ namespace projectAirport.DataSources
     using projectAirport.Factory;
     using System.Data;
 
-    internal class ReadNetwork(List<Thing> thingList, ListDivider dividerL)
+    internal class ReadNetwork(DataSource data)
     {
-        private List<Thing> thingList = thingList;
-        private ListDivider divider=dividerL;
+        private DataSource dataSource=data;
         private static Dictionary<string, FactoryFromBytes> factoryFunctions = new Dictionary<string, FactoryFromBytes>()
         {
             { "NCR", new FactoryFromBytesCrew()},
@@ -33,11 +32,11 @@ namespace projectAirport.DataSources
             byte[] msgBytes = msg.MessageBytes;
             string type = Encoding.ASCII.GetString(msgBytes, 0, 3);
 
-            lock (thingList)
+            lock (dataSource)
             {
-                Thing thing = factoryFunctions[type].makeObjectFromBytes(msgBytes, divider);
-                thingList.Add(thing);
-                thing.devideList(divider);
+                Thing thing = factoryFunctions[type].makeObjectFromBytes(msgBytes, dataSource.divider);
+                dataSource.thingList.Add(thing);
+                thing.devideList(dataSource.divider);
             }
 
         }

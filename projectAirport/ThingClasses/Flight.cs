@@ -66,8 +66,6 @@ namespace projectAirport
         
         public override void devideList(ListDivider lsd) { lsd.AddFlights(this); }
 
-        //double currentTime=(DateTime.Now - DateTime.Now.Date).TotalSeconds;
-        //float speed = 36;
         public bool UpdatePosition()
         {
             TimeOnly start = new TimeOnly();
@@ -75,7 +73,6 @@ namespace projectAirport
             TimeOnly.TryParse(takeOffTime, out start);
             TimeOnly.TryParse(landingTime, out end);
 
-            //currentTime += speed;
             double currentTime = (DateTime.Now - DateTime.Now.Date).TotalSeconds;
 
             double startSec = (start - new TimeOnly(0, 0)).TotalSeconds;
