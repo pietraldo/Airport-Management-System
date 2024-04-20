@@ -8,17 +8,29 @@ namespace projectAirport
 {
     internal class DataLogger
     {
-        static readonly int numberOfApplicationsStarts;
-        public static void LogToFile(string data)
+        private static string? fileName = null;
+        public static string GetFileName()
         {
+            if (fileName != null)
+                return fileName;
+
             // create folder if doesn't exists
-            string folderPath = Environment.CurrentDirectory + "\\logs";
+            string folderPath = Environment.CurrentDirectory + "/logs";
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
+            string dateTime = $"{DateTime.Now:dd_MM_yyyy}";
+            int num = 1;
+            while (File.Exists($"{folderPath}/{dateTime}_{num}.txt")) num++;
+
+            fileName = $"{folderPath}/{dateTime}_{num}.txt";
+            return fileName;
+        }
+        public static void LogToFile(string data)
+        {
             // writing to file
-            string fileName = $"{DateTime.Now:dd_MM_yyyy}.txt";
-            using (StreamWriter sw = new StreamWriter(folderPath+"\\"+fileName, true))
+            string fileName = GetFileName();
+            using (StreamWriter sw = new StreamWriter(fileName, true))
             {
                 sw.WriteLine(data);
             }
