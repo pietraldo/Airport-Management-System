@@ -25,9 +25,8 @@ namespace projectAirport
         static void Main(string[] args)
         {
             DataSource dataSource = new DataSource();
-            //dataSource.FromFile("data/example_data.ftr");
-            dataSource.FromNetwork("data/example_data.ftr",1,1);
-            dataSource.FromNetwork("data/example.ftre", 100, 1000);
+            dataSource.FromFile("data/example_data.ftr");
+            dataSource.FromNetwork("data/example.ftre", 100, 500);
 
             // starting simulation
             FlightSimulator.RunGui(dataSource);
@@ -40,7 +39,6 @@ namespace projectAirport
             reportables = reportables.Concat(dataSource.divider.Airports)
                 .Concat(dataSource.divider.CargoPlanes)
                 .Concat(dataSource.divider.PassengerPlanes).ToList();
-
 
             string asw = "";
             while ((asw = Console.ReadLine()) != "exit")

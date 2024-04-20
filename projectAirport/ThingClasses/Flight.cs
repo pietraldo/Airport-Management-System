@@ -99,7 +99,6 @@ namespace projectAirport
                 return FlightSimulator.ShowOnlyFlyingPlanes;
             }
 
-            
             double timeLeft = endSec-currentTime;
 
 
