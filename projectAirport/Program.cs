@@ -26,40 +26,35 @@ namespace projectAirport
         {
             DataSource dataSource = new DataSource();
             dataSource.FromFile("data/example_data.ftr");
+            dataSource.FromNetwork("data/example.ftre", 100, 1000);
 
-            
+            // starting simulation
+            FlightSimulator.RunGui(dataSource);
 
-            dataSource.FromNetwork("data/example.ftre", 1, 1);
+            // creating medias
+            List<Media> media = Media.CreateMedia();
 
-            Thread.Sleep(2000);
-            dataSource.MakeSnapshot();
-            //// starting simulation
-            ////FlightSimulator.RunGui(dataSource);
-
-            //// creating medias
-            //List<Media> media = Media.CreateMedia();
-
-            //// creating list of reportables
-            //List<IReportable> reportables = new List<IReportable>();
-            //reportables = reportables.Concat(dataSource.divider.Airports)
-            //    .Concat(dataSource.divider.CargoPlanes)
-            //    .Concat(dataSource.divider.PassengerPlanes).ToList();
+            // creating list of reportables
+            List<IReportable> reportables = new List<IReportable>();
+            reportables = reportables.Concat(dataSource.divider.Airports)
+                .Concat(dataSource.divider.CargoPlanes)
+                .Concat(dataSource.divider.PassengerPlanes).ToList();
 
 
-            //string asw = "";
-            //while ((asw = Console.ReadLine()) != "exit")
-            //{
-            //    if (asw == "print")
-            //    {
-            //        dataSource.MakeSnapshot();
-            //    }
-            //    if (asw == "raport")
-            //    {
-            //        NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
-            //        newsGenerator.PrintAllNews();
-            //    }
-            //}
-            //Console.WriteLine("exiting...");
+            string asw = "";
+            while ((asw = Console.ReadLine()) != "exit")
+            {
+                if (asw == "print")
+                {
+                    dataSource.MakeSnapshot();
+                }
+                if (asw == "raport")
+                {
+                    NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
+                    newsGenerator.PrintAllNews();
+                }
+            }
+            Console.WriteLine("exiting...");
         }
     }
 }
