@@ -22,22 +22,16 @@ namespace projectAirport
     [JsonDerivedType(typeof(Flight), "Flight")]
     public abstract class Thing
     {
-        
         protected UInt64 id;
         public UInt64 ID { get { return id; } set { id = value; } }
 
-        public abstract void devideList(ListDivider lsd);
         public Thing(UInt64 id)
         {
             ID = id;
         }
+        public Thing(){}
 
-        
-        public Thing()
-        {
-           
-        }
-
+        public abstract void devideList(ListDivider lsd);
         public void IDUpdateMethod(IDUpdateArgs args)
         {
             if(id==args.ObjectID)

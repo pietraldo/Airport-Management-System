@@ -87,16 +87,50 @@ namespace projectAirport.Factory
 
             string[] strings1 = fields[10].Split(";");
             string[] strings2 = fields[11].Split(";");
-            ulong[] crewId = new ulong[strings1.Length];
-            ulong[] loadId = new ulong[strings2.Length];
+            Crew[] crew = new Crew[strings1.Length];
+            Thing[] load = new Thing[strings2.Length];
+
             for (int i = 0; i < strings1.Length; i++)
             {
-                crewId[i] = ulong.Parse(strings1[i]);
+                ulong crewId = ulong.Parse(strings1[i]);
+                foreach(Crew crew1 in divider.Crews)
+                {
+                    if(crewId==crew1.ID)
+                    {
+                        crew[i] = crew1;
+                        break;
+                    }
+                }
             }
+
             for (int i = 0; i < strings2.Length; i++)
             {
-                loadId[i] = ulong.Parse(strings2[i]);
+                ulong loadId = ulong.Parse(strings2[i]);
+                foreach(Passenger p in divider.Passengers)
+                {
+                    if(p.ID== loadId)
+                        load[i] = p;
+                }
+                foreach(Cargo p in divider.Cargos)
+                {
+                    if(p.ID== loadId)
+                        load[i] = p;
+                }
             }
+
+            Plane plane=null;
+            ulong planeId = ulong.Parse(fields[9]);
+            foreach (PassengerPlane p in divider.PassengerPlanes)
+            {
+                if (p.ID == planeId)
+                    plane = p;
+            }
+            foreach (CargoPlane p in divider.CargoPlanes)
+            {
+                if (p.ID == planeId)
+                    plane = p;
+            }
+
             ulong fromId=ulong.Parse(fields[2]);
             ulong toId = ulong.Parse(fields[3]);
             Airport from = null;
@@ -119,9 +153,9 @@ namespace projectAirport.Factory
                 float.Parse(fields[6], CultureInfo.InvariantCulture),
                 float.Parse(fields[7], CultureInfo.InvariantCulture),
                 float.Parse(fields[8], CultureInfo.InvariantCulture),
-                ulong.Parse(fields[9]),
-                crewId,
-                loadId
+                plane,
+                crew,
+                load
             );
         }
     }

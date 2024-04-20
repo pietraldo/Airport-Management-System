@@ -25,11 +25,10 @@ namespace projectAirport
         static void Main(string[] args)
         {
             DataSource dataSource = new DataSource();
-
-
             dataSource.FromFile("data/example_data.ftr");
-            dataSource.MakeSnapshot();
 
+            dataSource.MakeSnapshot();
+            
             ////dataSource.FromNetwork("data/example.ftre",1,1);
 
             //// starting simulation

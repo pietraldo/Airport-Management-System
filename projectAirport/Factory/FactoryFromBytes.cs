@@ -125,14 +125,53 @@ namespace projectAirport.Factory
             string takeoffString = takeoffDateTime.Hour.ToString() + ":" + takeoffDateTime.Minute.ToString();
             string landingString = landingTime.Hour.ToString() + ":" + landingTime.Minute.ToString();
 
-            ulong[] crew = new ulong[cc];
-            ulong[] passangers = new ulong[pcc];
+            Crew[] crew = new Crew[cc];
+            
 
             for (int i = 0; i < cc; i++)
-                crew[i] = BitConverter.ToUInt64(msgBytes, 57 + 8 * i);
+            {
+                ulong crewId = BitConverter.ToUInt64(msgBytes, 57 + 8 * i);
+                foreach(Crew crew1 in divider.Crews)
+                {
+                    if (crewId == crew1.ID)
+                    {
+                        crew[i] = crew1;
+                        break;
+                    }
+                        
+                }
+            }
 
+            // geting refernce to plane
+            Plane plane = null;
+            foreach (PassengerPlane p in divider.PassengerPlanes)
+            {
+                if (p.ID == planeId)
+                    plane = p;
+            }
+            foreach (CargoPlane p in divider.CargoPlanes)
+            {
+                if (p.ID == planeId)
+                    plane = p;
+            }
+
+            // getting reference to load
+            Thing[] load = new Thing[pcc];
             for (int i = 0; i < pcc; i++)
-                passangers[i] = BitConverter.ToUInt64(msgBytes, 59 + 8 * cc + 8 * i);
+            {
+                ulong loadId= BitConverter.ToUInt64(msgBytes, 59 + 8 * cc + 8 * i);
+                foreach (Passenger p in divider.Passengers)
+                {
+                    if (p.ID == loadId)
+                        load[i] = p;
+                }
+                foreach (Cargo p in divider.Cargos)
+                {
+                    if (p.ID == loadId)
+                        load[i] = p;
+                }
+            }
+                
 
             Airport from = null;
             Airport to = null;
@@ -145,7 +184,7 @@ namespace projectAirport.Factory
                     to = airport;
             }
 
-            return new Flight(id, from, to, takeoffString, landingString, null, null, null, planeId, crew, passangers);
+            return new Flight(id, from, to, takeoffString, landingString, null, null, null, plane, crew, load);
         }
     }
 

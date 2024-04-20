@@ -19,27 +19,25 @@ namespace projectAirport
         protected Single? longitude;
         protected Single? latitude;
         protected Single? amls;
-        protected UInt64 plainId;
-        protected UInt64[] crewId;
-        protected UInt64[] loadId;
-        //[JsonIgnore]
+        protected Plane plainId;
+        protected Crew[] crewId;
+        protected Thing[] loadId;
+
         public Airport? Origin { get { return origin; } set { origin = value; } }
-        //[JsonPropertyName("Origin")]
-        //public ulong? IdOrigin => Origin != null ? Origin.ID : null;
         public Airport? Target { get { return target; } set { target = value; } }
         public string TakeOffTime { get { return takeOffTime; } set { takeOffTime = value; } }
         public string LandingTime { get { return landingTime; } set { landingTime = value; } }
         public Single? Longitude { get { return longitude; } set { longitude = value; } }
         public Single? Latitude { get { return latitude; } set { latitude = value; } }
         public Single? Amls { get { return amls; } set { amls = value; } }
-        public UInt64 PlainId { get { return plainId; } set { plainId = value; } }
-        public UInt64[] CrewId { get { return crewId; } set { crewId = value; } }
-        public UInt64[] LoadId { get { return loadId; } set { loadId = value; } }
+        public Plane PlainId { get { return plainId; } set { plainId = value; } }
+        public Crew[] CrewId { get { return crewId; } set { crewId = value; } }
+        public Thing[] LoadId { get { return loadId; } set { loadId = value; } }
         
 
         public Flight() { }
         public Flight(UInt64 id, Airport? origin, Airport? target, string takeOffTime, string landingTime,
-    Single? longitude, Single? latitude, Single? amls, UInt64 plainId, UInt64[] crewId, UInt64[] loadId) : base(id)
+                Single? longitude, Single? latitude, Single? amls, Plane plainId, Crew[] crewId, Thing[] loadId) : base(id)
         {
             Origin = origin;
             Target = target;
@@ -55,10 +53,12 @@ namespace projectAirport
                 Latitude = (float)latitude;
             Amls = amls;
             PlainId = plainId;
-            CrewId = new ulong[crewId.Length];
+
+            CrewId = new Crew[crewId.Length];
             for (int i = 0; i < crewId.Length; i++)
                 CrewId[i] = crewId[i];
-            LoadId = new ulong[loadId.Length];
+
+            LoadId = new Thing[loadId.Length];
             for (int i = 0; i < loadId.Length; i++)
                 LoadId[i] = loadId[i];
         }
