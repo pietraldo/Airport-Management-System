@@ -43,11 +43,16 @@ namespace projectAirport
         {
             if (args.ObjectID != id) return;
 
+            string log_przed = $"Pozycja: ({longitude}, {latitude}, {amls})";
+
             longitude = args.Longitude;
             latitude = args.Latitude;
             amls = args.AMSL;
 
-            Console.WriteLine("airport");
+            string log_po = $"Pozycja: ({longitude}, {latitude}, {amls})";
+
+            string log = $"Id: {id}, Zmiana pozycji. {log_przed} -> {log_po}";
+            DataLogger.LogToFile(log);
         }
     }
 }

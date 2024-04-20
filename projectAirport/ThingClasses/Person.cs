@@ -30,10 +30,15 @@ namespace projectAirport
         {
             if (args.ObjectID != id) return;
 
-            phone=args.PhoneNumber;
+            string log_przed = $"Dane kontaktowe: {phone}, {email}";
+
+            phone = args.PhoneNumber;
             email = args.EmailAddress;
 
-            Console.WriteLine("contact");
+            string log_po = $"Dane kontaktowe: {phone}, {email}";
+
+            string log = $"Id: {id}, Zmiana danych. {log_przed} -> {log_po}";
+            DataLogger.LogToFile(log);
         }
     }
 

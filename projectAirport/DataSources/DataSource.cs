@@ -44,7 +44,11 @@ namespace projectAirport
         }
         public void MakeSnapshot()
         {
-            string snapName = $"data/snapshot_{DateTime.Now:HH_mm_ss}.json";
+            string dirName = Environment.CurrentDirectory + "/snapshots";
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            string snapName = $"{dirName}/snapshot_{DateTime.Now:HH_mm_ss}.json";
             Console.WriteLine(thingList.Count);
             Serialization.SerializeJson(thingList, snapName);
         }

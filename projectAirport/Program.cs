@@ -27,10 +27,12 @@ namespace projectAirport
             DataSource dataSource = new DataSource();
             dataSource.FromFile("data/example_data.ftr");
 
-            dataSource.MakeSnapshot();
             
-            ////dataSource.FromNetwork("data/example.ftre",1,1);
 
+            dataSource.FromNetwork("data/example.ftre", 1, 1);
+
+            Thread.Sleep(2000);
+            dataSource.MakeSnapshot();
             //// starting simulation
             ////FlightSimulator.RunGui(dataSource);
 

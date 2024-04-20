@@ -36,7 +36,14 @@ namespace projectAirport
         {
             if(id==args.ObjectID)
             {
-                id=args.NewObjectID;
+                string log_przed = $"Id: {id}";
+
+                id = args.NewObjectID;
+
+                string log_po = $"Id: {id}";
+
+                string log = $"Id: {id}, Zmiana Id. {log_przed} -> {log_po}";
+                DataLogger.LogToFile(log);
             }
         }
     }

@@ -17,8 +17,6 @@ namespace projectAirport
 
         public void IDUpdateHandler(object sender, IDUpdateArgs args)
         {
-            Console.WriteLine($"Change Id: {args.ObjectID} {args.NewObjectID}");
-
             foreach (var item in _dataSource.thingList)
             {
                 if (item.ID == args.ObjectID)
@@ -32,7 +30,6 @@ namespace projectAirport
 
         public void PositionUpdateHandler(object sender, PositionUpdateArgs args)
         {
-            Console.WriteLine($"Position Change: {args.ObjectID}");
             foreach (var item in _dataSource.divider.Flights)
             {
                 if (item.ID == args.ObjectID)
@@ -40,26 +37,20 @@ namespace projectAirport
                     item.UpdatePosition(args);
                     return;
                 }
-                   
-                
             }
             foreach (var item in _dataSource.divider.Airports)
             {
-
                 if (item.ID == args.ObjectID)
                 {
                     item.UpdatePosition(args);
                     return;
                 }
-                
-                
             }
             DataLogger.LogToFile($"Operacja UpdatePosition na objekcie {args.ObjectID} nie możliwa do zrealizowania");
         }
 
         public void ContactInfoUpdateHandler(object sender, ContactInfoUpdateArgs args)
         {
-            Console.WriteLine($"Contact Change: {args.ObjectID}");
             foreach (var item in _dataSource.divider.Passengers)
             {
                 if (item.ID == args.ObjectID)

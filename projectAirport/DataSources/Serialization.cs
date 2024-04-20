@@ -18,8 +18,6 @@ namespace projectAirport
 
             File.WriteAllText(fileName, jsonString);
             Console.WriteLine($"Data written to file: {fileName}");
-
-            DeserializeJson(fileName);
         }
         public static List<Thing>? DeserializeJson(string fileName)
         {

@@ -125,8 +125,6 @@ namespace projectAirport
             latitude = args.Latitude;
             amls = args.AMSL;
 
-            Console.WriteLine("samolot");
-
             string log_po = $"Pozycja: ({longitude}, {latitude}, {amls})";
 
             string log = $"Id: {id}, Zmiana pozycji. {log_przed} -> {log_po}";
