@@ -29,7 +29,7 @@ namespace projectAirport
             dataSource.FromNetwork("data/example.ftre", 100, 500);
 
             // starting simulation
-            FlightSimulator.RunGui(dataSource);
+            //FlightSimulator.RunGui(dataSource);
 
             // creating medias
             List<Media> media = Media.CreateMedia();
@@ -54,7 +54,7 @@ namespace projectAirport
                 }
                 else
                 {
-                    ParseCommand ps = new ParseCommand();
+                    ParseCommand ps = new ParseCommand(asw);
                 }
             }
             Console.WriteLine("exiting...");
