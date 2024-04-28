@@ -105,6 +105,8 @@ namespace projectAirport
             float distx = (float)(target.Longitude - longitude);
             float disty =(float)( target.Latitude - latitude);
 
+            if(Math.Abs((float)(distx / timeLeft)) >0.1|| Math.Abs((float)(disty / timeLeft)) > 0.1)
+                Console.WriteLine();
             longitude += (float)(distx / timeLeft);
             latitude+=(float)(disty / timeLeft);
 

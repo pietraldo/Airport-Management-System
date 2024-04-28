@@ -47,10 +47,14 @@ namespace projectAirport
                 {
                     dataSource.MakeSnapshot();
                 }
-                if (asw == "raport")
+                else if (asw == "raport")
                 {
                     NewsGenerator newsGenerator = new NewsGenerator(media, reportables);
                     newsGenerator.PrintAllNews();
+                }
+                else
+                {
+                    ParseCommand ps = new ParseCommand();
                 }
             }
             Console.WriteLine("exiting...");
