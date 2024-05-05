@@ -1,5 +1,4 @@
-﻿using projectAirport;
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -16,6 +15,7 @@ namespace projectAirport
     using Microsoft.VisualBasic;
     using NetTopologySuite.Geometries;
     using NetworkSourceSimulator;
+    using projectAirport.SQL;
     using System.Data;
     using System.Linq;
     using System.Text;
@@ -55,6 +55,7 @@ namespace projectAirport
                 else
                 {
                     ParseCommand ps = new ParseCommand(asw);
+                    ps.Show();
                 }
             }
             Console.WriteLine("exiting...");
