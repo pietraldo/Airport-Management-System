@@ -6,25 +6,41 @@ using System.Threading.Tasks;
 
 namespace projectAirport.SQL
 {
+    public enum operations {display, update, delete, add };
     internal class ParseCommand
     {
-        private string operation;
-        private string? objectClass;
-        private string[]? fieldsToDisplay;
-        private Condition[]? conditions;
+        public operations operation;
+        public string objectClass;
+        public string[] fieldsToDisplay;
+        public ConditionParse[]? conditions;
 
         public ParseCommand(string command)
         {
             command = command.ToLower();
-            operation = GetOperation(command);
+            SetOperation(command);
             objectClass = GetObjectClass(command);
             fieldsToDisplay = GetFieldsToDisplay(command);
             conditions = GetConditions(command);
         }
 
-        private string GetOperation(string command)
+        private bool SetOperation(string command)
         {
-            return command.Split(' ')[0];
+            switch(command.Split(' ')[0])
+            {
+                case "display":
+                    operation = operations.display;
+                    return true;
+                case "update":
+                    operation = operations.update;
+                    return true;
+                case "add":
+                    operation = operations.add;
+                    return true;
+                case "delete":
+                    operation = operations.delete;
+                    return true;
+            }
+            return false;
         }
         private string? GetObjectClass(string command)
         {
@@ -38,7 +54,7 @@ namespace projectAirport.SQL
         }
         private string[]? GetFieldsToDisplay(string command)
         {
-            int startIndex = command.IndexOf("select")+6 ;
+            int startIndex = command.IndexOf("display")+7;
             int endIndex = command.IndexOf("from");
 
             if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex) return null;
@@ -48,14 +64,14 @@ namespace projectAirport.SQL
 
             return fields;
         }
-        private Condition[]? GetConditions(string command)
+        private ConditionParse[]? GetConditions(string command)
         {
             string[] cond = command.Split(" where ");
             if (cond.Length != 2) return null;
 
             string[] splited = cond[1].Split(new string[] { " and ", " or " }, StringSplitOptions.None);
 
-            Condition[] conds = new Condition[splited.Length];
+            ConditionParse[] conds = new ConditionParse[splited.Length];
             for (int i = 0; i < splited.Length; i++)
             {
                 string[] compers = new string[] { "<=", ">=", "!=", "=", ">", "<" };
@@ -69,14 +85,14 @@ namespace projectAirport.SQL
                         string[] data = splited[i].Split(compers[j], StringSplitOptions.TrimEntries);
                         if (data.Length != 2) return null;
 
-                        conds[i] = new Condition();
-                        conds[i].value = data[0];
-                        conds[i].field= data[1];
+                        conds[i] = new ConditionParse();
+                        conds[i].value1 = data[0];
+                        conds[i].value2= data[1];
                         conds[i].compare= compers[j];
 
                         len += splited[i].Length;
                         if (i == 0)
-                            conds[i].andOr = "and";
+                            conds[i].andOr = "or";
                         else
                         {
 
@@ -116,15 +132,18 @@ namespace projectAirport.SQL
             Console.WriteLine($"Conditions: ");
             if(conditions!=null)
             foreach (var cond in conditions)
-                Console.WriteLine($"[{cond.value}, {cond.field}, {cond.andOr}, {cond.compare}]");
+                Console.WriteLine($"[{cond.value1}, {cond.value2}, {cond.andOr}, {cond.compare}]");
         }
-    }
 
-    internal struct Condition
+       
+    }
+    internal struct ConditionParse
     {
-        public string value;
+        public string value1;
+        public string value2;
         public string andOr;
         public string compare;
-        public string field;
     }
+
+
 }

@@ -40,9 +40,11 @@ namespace projectAirport
                 .Concat(dataSource.divider.CargoPlanes)
                 .Concat(dataSource.divider.PassengerPlanes).ToList();
 
-            string asw = "";
+            string? asw = "";
             while ((asw = Console.ReadLine()) != "exit")
             {
+                if (asw == null)
+                    continue;
                 if (asw == "print")
                 {
                     dataSource.MakeSnapshot();
@@ -55,6 +57,10 @@ namespace projectAirport
                 else
                 {
                     ParseCommand ps = new ParseCommand(asw);
+                    MakeCommand mk = new MakeCommand(ps);
+                    ExecuteCommand ex=  new ExecuteCommand(mk, dataSource);
+                    PrintCommand pc = new PrintCommand(ex);
+
                     ps.Show();
                 }
             }
