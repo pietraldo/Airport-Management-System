@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace projectAirport
 {
@@ -40,6 +41,10 @@ namespace projectAirport
         {
             return media.ReportCargoPlane(this);
         }
+        public override string ToString()
+        {
+            return "{ " + $"{ID}, {Serial}, {Country},{Model}, {maxLoad}" + "}";
+        }
     }
 
     public class PassengerPlane : Plane
@@ -64,6 +69,11 @@ namespace projectAirport
         public override string Report(Media media)
         {
             return media.ReportPassangerPlane(this);
+        }
+
+        public override string ToString()
+        {
+            return "{ " + $"{ID}, {Serial}, {Country},{Model}, {firstClassSize}, {buisnessClassSize}, {economyClassSize}" + "}";
         }
     }
 }

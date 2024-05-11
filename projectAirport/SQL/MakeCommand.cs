@@ -15,13 +15,14 @@ namespace projectAirport.SQL
         private ParseCommand pc;
 
         private Dictionary<string, string[]> fields = new Dictionary<string, string[]>() {
-            { "flight", new string[] { "id", "origin", "target", "takeoftime", "landingtime", "worldposition","amsl", "plane" } },
+            { "flight", new string[] { "ID", "Origin", "Target", "TakeofTime", "LandingTime", "WorldPosition","AMSL", "Plane" } },
             { "airport", new string[] { "id", "name", "code", "worldposition", "amsl", "countrycode"} },
             { "passangerplane", new string[]{ "id", "serial", "countrycode", "model"} },
             { "cargoplane", new string[]{ "id", "serial", "countrycode", "model", "maxload"} },
             { "cargo", new string[]{ "id", "weight", "code", "description"} },
             { "passanger", new string[]{ "id", "name", "age", "phone", "email", "class", "miles"}},
-            { "crew", new string[]{ "id", "name", "age", "phone", "email", "practise", "role" } }
+            { "crew", new string[]{ "id", "name", "age", "phone", "email", "practise", "role" } },
+            { "plane", new string[]{ "ID", "Model", "Country", "Serial"} },
         };
 
         private Dictionary<(string, string), string> type = new Dictionary<(string, string), string>()
@@ -35,15 +36,19 @@ namespace projectAirport.SQL
 
         public MakeCommand(ParseCommand pc)
         {
-            if (!fields.ContainsKey(pc.objectClass))
-                return; // nie ma takiej tablicy
             this.pc = pc;
-
+        }
+        public bool Execute()
+        {
+            if (!fields.ContainsKey(pc.objectClass))
+                return false; // nie ma takiej tablicy
+            
             if (pc.operation == operations.display)
                 MakeDisplayComand();
 
             objectClass = pc.objectClass;
             MakeConditions(pc);
+            return true;
         }
 
         private bool MakeDisplayComand()

@@ -57,10 +57,18 @@ namespace projectAirport
                 else
                 {
                     ParseCommand ps = new ParseCommand(asw);
+                    if (!ps.Execute()) continue;
+                    
                     MakeCommand mk = new MakeCommand(ps);
+                    if (!mk.Execute()) continue;
+                    
                     ExecuteCommand ex=  new ExecuteCommand(mk, dataSource);
+                    if (!ex.Execute()) continue;
+                    
                     PrintCommand pc = new PrintCommand(ex);
-
+                    if (!pc.Execute()) continue;
+                    
+                    
                     ps.Show();
                 }
             }

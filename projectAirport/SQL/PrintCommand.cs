@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace projectAirport.SQL
 {
@@ -13,10 +14,15 @@ namespace projectAirport.SQL
         ExecuteCommand executeCommand;
         public PrintCommand(ExecuteCommand executeCommand)
         {
-            toPrint = executeCommand.toPrint;
-            fieldsToDisplay= executeCommand.mc.fieldsToDisplay;
             this.executeCommand = executeCommand;
+        }
+        public bool Execute()
+        {
+            toPrint = executeCommand.toPrint;
+            fieldsToDisplay = executeCommand.mc.fieldsToDisplay;
+            
             Print();
+            return true;
         }
 
         // prints array of strings,

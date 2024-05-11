@@ -9,6 +9,7 @@ namespace projectAirport.SQL
     public enum operations {display, update, delete, add };
     internal class ParseCommand
     {
+        string command;
         public operations operation;
         public string objectClass;
         public string[] fieldsToDisplay;
@@ -16,11 +17,16 @@ namespace projectAirport.SQL
 
         public ParseCommand(string command)
         {
-            command = command.ToLower();
+            this.command = command;
+        }
+
+        public bool Execute()
+        {
             SetOperation(command);
             objectClass = GetObjectClass(command);
             fieldsToDisplay = GetFieldsToDisplay(command);
             conditions = GetConditions(command);
+            return true;
         }
 
         private bool SetOperation(string command)
@@ -47,7 +53,7 @@ namespace projectAirport.SQL
             string[] commands = command.Split(' ');
             string? object_class = null;
             for (int i = 0; i < commands.Length - 1; i++)
-                if (string.Equals(commands[i], "from", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(commands[i], "from"))
                     object_class = commands[i + 1];
 
             return object_class;

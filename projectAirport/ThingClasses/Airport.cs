@@ -33,7 +33,7 @@ namespace projectAirport
             Amls = amls;
             Country = country;
         }
-       
+
         public override void devideList(ListDivider lsd) { lsd.AddAirports(this); }
         public string Report(Media media)
         {
@@ -57,7 +57,7 @@ namespace projectAirport
 
         public override string ToString()
         {
-            return "{ "+$"{ID}, {Name}, {Code}, {Longitude}, {Latitude},{amls}, {country}"+"}";
+            return "{ " + $"{ID}, {Name}, {Code}, " + "{" + $"{Longitude}, {Latitude}" + "}" + $",{amls}, {country}" + "}";
         }
     }
 }

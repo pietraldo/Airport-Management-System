@@ -19,7 +19,7 @@ namespace projectAirport
         protected Single? longitude;
         protected Single? latitude;
         protected Single? amls;
-        protected Plane plainId;
+        protected Plane plain;
         protected Crew[] crewId;
         protected Thing[] loadId;
 
@@ -30,14 +30,14 @@ namespace projectAirport
         public Single? Longitude { get { return longitude; } set { longitude = value; } }
         public Single? Latitude { get { return latitude; } set { latitude = value; } }
         public Single? Amls { get { return amls; } set { amls = value; } }
-        public Plane PlainId { get { return plainId; } set { plainId = value; } }
+        public Plane Plain { get { return plain; } set { plain = value; } }
         public Crew[] CrewId { get { return crewId; } set { crewId = value; } }
         public Thing[] LoadId { get { return loadId; } set { loadId = value; } }
         
 
         public Flight() { }
         public Flight(UInt64 id, Airport? origin, Airport? target, string takeOffTime, string landingTime,
-                Single? longitude, Single? latitude, Single? amls, Plane plainId, Crew[] crewId, Thing[] loadId) : base(id)
+                Single? longitude, Single? latitude, Single? amls, Plane plain, Crew[] crewId, Thing[] loadId) : base(id)
         {
             Origin = origin;
             Target = target;
@@ -52,7 +52,7 @@ namespace projectAirport
             else
                 Latitude = (float)latitude;
             Amls = amls;
-            PlainId = plainId;
+            Plain = plain;
 
             CrewId = new Crew[crewId.Length];
             for (int i = 0; i < crewId.Length; i++)
