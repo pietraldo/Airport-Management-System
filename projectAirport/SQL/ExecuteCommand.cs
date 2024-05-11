@@ -12,28 +12,46 @@ namespace projectAirport.SQL
         public MakeCommand mc;
         DataSource data;
         public string[,] toPrint;
-        public ExecuteCommand(MakeCommand mc, DataSource dataSource) {
+        public ExecuteCommand(MakeCommand mc, DataSource dataSource)
+        {
             this.mc = mc;
             data = dataSource;
             Execute();
         }
 
+        static Dictionary<string, Func<Flight, string, string>> flightsDic = new Dictionary<string, Func<Flight, string, string>>() {
+            { "id", (flight, command) => flight.ID.ToString() },
+            { "amsl", (flight, command) => flight.Amls.ToString() },
+            { "origin", (flight, command) => {
+                string[] fields=command.Split(".");
+                if(fields.Length>1)
+                    return airportDic[fields[1]](flight.Origin, string.Join(".",fields.Skip(1).ToArray()));
+                else
+                    return flight.Origin.ToString();
+             }
+
+             }
+        };
+
+        static Dictionary<string, Func<Airport, string, string>> airportDic = new Dictionary<string, Func<Airport, string, string>>() {
+            { "id", (airport, command) => airport.ID.ToString() },
+            { "name", (airport, command) => airport.Name.ToString() },
+            { "amsl", (airport, command) => airport.Amls.ToString() }
+        };
+
         private void Execute()
         {
-            Dictionary<string, Func<Flight, string>> dict = new Dictionary<string, Func<Flight, string>>() {
 
-                { "id", (flight)=>flight.ID.ToString() },
-                { "amsl", (flight)=>flight.Amls.ToString() }
-            };
             switch (mc.objectClass)
             {
                 case "flight":
                     toPrint = new string[data.divider.Flights.Count, mc.fieldsToDisplay.Length];
-                    for(int i=0; i<data.divider.Flights.Count; i++)
+                    for (int i = 0; i < data.divider.Flights.Count; i++)
                     {
-                        for(int j=0; j<mc.fieldsToDisplay.Length; j++)
+                        for (int j = 0; j < mc.fieldsToDisplay.Length; j++)
                         {
-                            toPrint[i, j] = dict[mc.fieldsToDisplay[j]](data.divider.Flights[i]);
+                            string[] fields = mc.fieldsToDisplay[j].Split(".");
+                            toPrint[i, j] = flightsDic[fields[0]](data.divider.Flights[i], mc.fieldsToDisplay[j]);
                         }
                     }
                     break;
@@ -41,18 +59,18 @@ namespace projectAirport.SQL
         }
         private void ExecuteFlights(List<Flight> flights)
         {
-            List<Flight> flightsPassed= new List<Flight>();
-            if(mc.conditions!=null)
+            List<Flight> flightsPassed = new List<Flight>();
+            if (mc.conditions != null)
             {
                 for (int i = 0; i < flights.Count; i++)
                 {
                     bool add = false;
-                    for(int j=0; j< mc.conditions.Length; j++)
+                    for (int j = 0; j < mc.conditions.Length; j++)
                     {
-                        bool value = mc.conditions[j].Comparison(flights[i].ID ,mc.conditions[j].value);
+                        bool value = mc.conditions[j].Comparison(flights[i].ID, mc.conditions[j].value);
                         add = (mc.conditions[j].andOr == "and") ? add && value : add || value;
                     }
-                    if(add)
+                    if (add)
                     {
                         flightsPassed.Add(flights[i]);
                     }
@@ -60,7 +78,7 @@ namespace projectAirport.SQL
             }
             else
             {
-                flightsPassed=flights;
+                flightsPassed = flights;
             }
         }
     }

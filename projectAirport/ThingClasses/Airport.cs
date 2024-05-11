@@ -54,5 +54,10 @@ namespace projectAirport
             string log = $"Id: {id}, Zmiana pozycji. {log_przed} -> {log_po}";
             DataLogger.LogToFile(log);
         }
+
+        public override string ToString()
+        {
+            return "{ "+$"{ID}, {Name}, {Code}, {Longitude}, {Latitude},{amls}, {country}"+"}";
+        }
     }
 }

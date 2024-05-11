@@ -28,8 +28,10 @@ namespace projectAirport.SQL
             int[] colLen = new int[toPrint.GetLength(1)];
             int sum = 0;
 
+            Console.WriteLine();
             for (int i = 0; i < toPrint.GetLength(1); i++)
             {
+                colLen[i] = fieldsToDisplay[i].Length;
                 for (int j = 0; j < toPrint.GetLength(0); j++)
                 {
                     if (toPrint[j, i].Length > colLen[i])

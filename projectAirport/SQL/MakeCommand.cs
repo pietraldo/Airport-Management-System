@@ -12,7 +12,7 @@ namespace projectAirport.SQL
         public ConditionsMakeComand<object>[]? conditions;
         public string[] fieldsToDisplay;
         public string objectClass;
-
+        private ParseCommand pc;
 
         private Dictionary<string, string[]> fields = new Dictionary<string, string[]>() {
             { "flight", new string[] { "id", "origin", "target", "takeoftime", "landingtime", "worldposition","amsl", "plane" } },
@@ -37,26 +37,48 @@ namespace projectAirport.SQL
         {
             if (!fields.ContainsKey(pc.objectClass))
                 return; // nie ma takiej tablicy
+            this.pc = pc;
 
             if (pc.operation == operations.display)
-            {
+                MakeDisplayComand();
 
-                if (pc.fieldsToDisplay.Count() == 1 && pc.fieldsToDisplay[0] == "*")
-                {
-                    fieldsToDisplay = fields[pc.objectClass];
-                }
-                else
-                {
-                    for (int i = 0; i < pc.fieldsToDisplay.Count(); i++)
-                        if (!fields[pc.objectClass].Contains(pc.fieldsToDisplay[i]))
-                            return; // zle pole do wyswietlenia
-
-                    fieldsToDisplay = pc.fieldsToDisplay;
-                }
-
-            }
             objectClass = pc.objectClass;
             MakeConditions(pc);
+        }
+
+        private bool MakeDisplayComand()
+        {
+            if (pc.fieldsToDisplay.Count() == 1 && pc.fieldsToDisplay[0] == "*")
+            {
+                fieldsToDisplay = fields[pc.objectClass];
+            }
+            else
+            {
+                for (int i = 0; i < pc.fieldsToDisplay.Count(); i++)
+                {
+                    if (pc.fieldsToDisplay[i].Contains("."))
+                    {
+                        string[] s = pc.fieldsToDisplay[i].Split(new char[] { '.' });
+                        if (!fields[pc.objectClass].Contains(s[0]))
+                        {
+                            Console.WriteLine("wrong class field");
+                            return false; // zle pole do wyswietlenia
+                        }
+
+
+                    }
+                    else if (!fields[pc.objectClass].Contains(pc.fieldsToDisplay[i]))
+                    {
+                        Console.WriteLine("wrong class field");
+                        return false; // zle pole do wyswietlenia
+                    }
+
+                }
+
+
+                fieldsToDisplay = pc.fieldsToDisplay;
+            }
+            return true;
         }
 
         private bool MakeConditions(ParseCommand pc)
