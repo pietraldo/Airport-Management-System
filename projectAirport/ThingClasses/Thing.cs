@@ -32,6 +32,10 @@ namespace projectAirport
         public Thing(){}
 
         public abstract void devideList(ListDivider lsd);
+
+        // Function returns if it found that field, value of this field and type
+        public abstract (bool, string, string) GetFieldAndType(string field);
+
         public void IDUpdateMethod(IDUpdateArgs args)
         {
             if(id==args.ObjectID)

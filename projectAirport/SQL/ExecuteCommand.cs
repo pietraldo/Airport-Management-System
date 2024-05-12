@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -18,77 +19,48 @@ namespace projectAirport.SQL
             data = dataSource;
         }
 
-
-        static Dictionary<string, Func<Flight, string, string>> flightsDic = new Dictionary<string, Func<Flight, string, string>>() {
-            { "ID", (flight, command) => flight.ID.ToString() },
-            { "Origin", (flight, command) => {
-                string[] fields=command.Split(".");
-                if(fields.Length>1)
-                    return airportDic[fields[1]](flight.Origin, string.Join(".",fields.Skip(1).ToArray()));
-                else
-                    return flight.Origin.ToString();}
-            },
-            { "Target", (flight, command) => {
-                string[] fields=command.Split(".");
-                if(fields.Length>1)
-                    return airportDic[fields[1]](flight.Target, string.Join(".",fields.Skip(1).ToArray()));
-                else
-                    return flight.Origin.ToString();}
-            },
-             { "TakeofTime", (flight, command) => flight.TakeOffTime.ToString() },
-             { "LandingTime", (flight, command) => flight.LandingTime.ToString() },
-             { "WorldPosition", (flight, command) =>
-                {
-                    string[] fields=command.Split(".");
-                    if(fields.Length>1)
-                    {
-                        if(fields[1]=="Lat")
-                            return flight.Latitude.ToString();
-                        else if(fields[1]=="Long")
-                            return flight.Longitude.ToString();
-                        else
-                            return "";
-                    }
-                    else
-                        return "{"+$"{flight.Longitude}, {flight.Latitude}"+"}";
-                }
-             },
-             { "AMSL", (flight, command) => flight.Amls.ToString() },
-             { "Plane", (flight, command) => {
-                string[] fields=command.Split(".");
-                if(fields.Length>1)
-                    return planeDic[fields[1]](flight.Plain, string.Join(".",fields.Skip(1).ToArray()));
-                else
-                    return flight.Plain.ToString();}
-            }
-        };
-        static Dictionary<string, Func<Airport, string, string>> airportDic = new Dictionary<string, Func<Airport, string, string>>() {
-            { "id", (airport, command) => airport.ID.ToString() },
-            { "name", (airport, command) => airport.Name.ToString() },
-            { "amsl", (airport, command) => airport.Amls.ToString() }
-        };
-        static Dictionary<string, Func<Plane, string, string>> planeDic = new Dictionary<string, Func<Plane, string, string>>() {
-            { "ID", (plane, command) => plane.ID.ToString() },
-            { "Serial", (plane, command) => plane.Serial.ToString() },
-            { "Country", (plane, command) => plane.Country.ToString() },
-            { "Model", (plane, command) => plane.Model.ToString() },
-        };
-
         public bool Execute()
         {
+            List<Thing> thingList = new List<Thing>();
             switch (mc.objectClass)
             {
-                case "flight":
-                    ChooseFieldsToPrintFlight(FilterFlights(data.divider.Flights));
+                case "Flight":
+                    foreach(var a in data.divider.Flights)
+                        thingList.Add(a);
                     break;
+                case "Airport":
+                    foreach(var a in data.divider.Airports)
+                        thingList.Add(a);
+                    break;
+                case "PassengerPlane":
+                    foreach(var a in data.divider.PassengerPlanes)
+                        thingList.Add(a);
+                    break;
+                case "CargoPlane":
+                    foreach(var a in data.divider.CargoPlanes)
+                        thingList.Add(a);
+                    break;
+                case "Cargo":
+                    foreach(var a in data.divider.Cargos)
+                        thingList.Add(a);
+                    break;
+                case "Passenger":
+                    foreach(var a in data.divider.Passengers)
+                        thingList.Add(a);
+                    break;
+                case "Crew":
+                    foreach(var a in data.divider.Crews)
+                        thingList.Add(a);
+                    break;
+                   
             }
-            return true;
+            return ChooseFieldsToPrintFlight(FilterFlights(thingList));
         }
 
-        private List<Flight> FilterFlights(List<Flight> flights)
+        private List<Thing> FilterFlights(List<Thing> flights)
         {
 
-            List<Flight> flightsPassed = new List<Flight>();
+            List<Thing> flightsPassed = new List<Thing>();
             if (mc.conditions != null)
             {
                 for (int i = 0; i < flights.Count; i++)
@@ -97,10 +69,11 @@ namespace projectAirport.SQL
                     for (int j = 0; j < mc.conditions.Length; j++)
                     {
                         string value = mc.conditions[j].value;
-                        string field = flightsDic[mc.conditions[j].field](flights[i], mc.conditions[j].field);
+                        (bool correct, string field, string typeOfVariable) = flights[i].GetFieldAndType(mc.conditions[j].field);
+                        if (!correct) continue;
                         
-                        bool res = Comparer.Compare(field,value , mc.conditions[j].comparer, "float");
-                        Console.Write(res);
+                        bool res = Comparer.Compare(field,value , mc.conditions[j].comparer, typeOfVariable);
+                        
                         add = (mc.conditions[j].andOr == "and") ? add && res : add || res;
                     }
                     if (add)
@@ -116,10 +89,10 @@ namespace projectAirport.SQL
 
             return flightsPassed;
         }
-        private void ChooseFieldsToPrintFlight(List<Flight> flights)
+        private bool ChooseFieldsToPrintFlight(List<Thing> objects)
         {
-            toPrint = new string[flights.Count, mc.fieldsToDisplay.Length];
-            for (int i = 0; i < flights.Count; i++)
+            toPrint = new string[objects.Count, mc.fieldsToDisplay.Length];
+            for (int i = 0; i < objects.Count; i++)
             {
                 for (int j = 0; j < mc.fieldsToDisplay.Length; j++)
                 {
@@ -127,16 +100,15 @@ namespace projectAirport.SQL
 
                     string objectField = "";
 
-                    switch (mc.objectClass)
-                    {
-                        case "flight":
-                            objectField = flightsDic[fields[0]](flights[i], mc.fieldsToDisplay[j]);
-                            break;
-                    }
+                    (bool correct, string field, string typeOfVariable) = objects[i].GetFieldAndType(mc.fieldsToDisplay[j]);
+                    if (!correct) return false;
+                    objectField = field;
+                    
 
                     toPrint[i, j] = objectField;
                 }
             }
+            return true;
         }
 
     }
@@ -148,11 +120,17 @@ namespace projectAirport.SQL
             switch (typeofVariable)
             {
                 case "int":
-                    return MakeComparation<int>(int.Parse(s1), int.Parse(s2), comparer);
+                    return MakeComparation(int.Parse(s1), int.Parse(s2), comparer);
                 case "Single":
-                    return MakeComparation<Single>(Single.Parse(s1), Single.Parse(s2), comparer);
+                    return MakeComparation(Single.Parse(s1), Single.Parse(s2), comparer);
                 case "float":
-                    return MakeComparation<Single>(Single.Parse(s1), Single.Parse(s2), comparer);
+                    return MakeComparation(float.Parse(s1), float.Parse(s2), comparer);
+                case "string":
+                    return MakeComparation(s1,s2, comparer);
+                case "uint":
+                    return MakeComparation(uint.Parse(s1), uint.Parse(s2), comparer);
+                case "DateTime":
+                    return MakeComparation(DateTime.Parse(s1), DateTime.Parse(s2), comparer);
             }
 
             return false;
@@ -165,8 +143,14 @@ namespace projectAirport.SQL
                     return field.CompareTo(value) > 0;
                 case "<":
                     return field.CompareTo(value) < 0;
+                case ">=":
+                    return field.CompareTo(value) >= 0;
+                case "<=":
+                    return field.CompareTo(value) <= 0;
                 case "=":
                     return field.CompareTo(value) == 0;
+                case "!=":
+                    return field.CompareTo(value) != 0;
             }
             return false;
         }

@@ -18,8 +18,8 @@ namespace projectAirport
         protected string landingTime;
         protected Single? longitude;
         protected Single? latitude;
-        protected Single? amls;
-        protected Plane plain;
+        protected Single? amsl;
+        protected Plane plane;
         protected Crew[] crewId;
         protected Thing[] loadId;
 
@@ -29,15 +29,15 @@ namespace projectAirport
         public string LandingTime { get { return landingTime; } set { landingTime = value; } }
         public Single? Longitude { get { return longitude; } set { longitude = value; } }
         public Single? Latitude { get { return latitude; } set { latitude = value; } }
-        public Single? Amls { get { return amls; } set { amls = value; } }
-        public Plane Plain { get { return plain; } set { plain = value; } }
+        public Single? Amsl { get { return amsl; } set { amsl = value; } }
+        public Plane Plane { get { return plane; } set { plane = value; } }
         public Crew[] CrewId { get { return crewId; } set { crewId = value; } }
         public Thing[] LoadId { get { return loadId; } set { loadId = value; } }
         
 
         public Flight() { }
         public Flight(UInt64 id, Airport? origin, Airport? target, string takeOffTime, string landingTime,
-                Single? longitude, Single? latitude, Single? amls, Plane plain, Crew[] crewId, Thing[] loadId) : base(id)
+                Single? longitude, Single? latitude, Single? amsl, Plane plane, Crew[] crewId, Thing[] loadId) : base(id)
         {
             Origin = origin;
             Target = target;
@@ -51,8 +51,8 @@ namespace projectAirport
                 Latitude = origin.Latitude;
             else
                 Latitude = (float)latitude;
-            Amls = amls;
-            Plain = plain;
+            Amsl = amsl;
+            Plane = plane;
 
             CrewId = new Crew[crewId.Length];
             for (int i = 0; i < crewId.Length; i++)
@@ -117,16 +117,62 @@ namespace projectAirport
         {
             if (args.ObjectID != id) return;
 
-            string log_przed = $"Pozycja: ({longitude}, {latitude}, {amls})";
+            string log_przed = $"Pozycja: ({longitude}, {latitude}, {amsl})";
 
             longitude = args.Longitude;
             latitude = args.Latitude;
-            amls = args.AMSL;
+            amsl = args.AMSL;
 
-            string log_po = $"Pozycja: ({longitude}, {latitude}, {amls})";
+            string log_po = $"Pozycja: ({longitude}, {latitude}, {amsl})";
 
             string log = $"Id: {id}, Zmiana pozycji. {log_przed} -> {log_po}";
             DataLogger.LogToFile(log);
+        }
+        
+        public override (bool, string, string) GetFieldAndType(string field)
+        {
+            string[] fields = field.Split(".");
+
+            switch(fields[0])
+            {
+                case "ID":
+                    return (true, ID.ToString(), "uint");
+                case "Origin":
+                    if (fields.Length > 1)
+                        return origin.GetFieldAndType(string.Join(".", fields.Skip(1).ToArray()));
+                    else
+                        return (true, origin.ToString(), "struct");
+                case "Target":
+                    if (fields.Length > 1)
+                        return target.GetFieldAndType(string.Join(".", fields.Skip(1).ToArray()));
+                    else
+                        return (true, target.ToString(), "struct");
+                case "TakeofTime":
+                    return (true, takeOffTime.ToString(), "DateTime");
+                case "LandingTime":
+                    return (true, landingTime.ToString(), "DateTime");
+                case "WorldPosition":
+                    if (fields.Length > 1)
+                    {
+                        if (fields[1] == "Lat")
+                            return (true, latitude.ToString(), "float");
+                        else if (fields[1] == "Long")
+                            return (true, longitude.ToString(), "float");
+                        else
+                            return (false,"", "");
+                    }
+                    else
+                        return (true, "{" + $"{longitude}, {latitude}" + "}", "struct");
+                case "AMSL":
+                    return (true, amsl.ToString(), "float");
+                case "Plane":
+                    if (fields.Length > 1)
+                        return plane.GetFieldAndType(string.Join(".", fields.Skip(1).ToArray()));
+                    else
+                        return (true, plane.ToString(), "struct");
+            }
+
+            return (false,"","");
         }
     }
 }

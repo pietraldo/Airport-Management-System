@@ -15,24 +15,17 @@ namespace projectAirport.SQL
         private ParseCommand pc;
 
         private Dictionary<string, string[]> fields = new Dictionary<string, string[]>() {
-            { "flight", new string[] { "ID", "Origin", "Target", "TakeofTime", "LandingTime", "WorldPosition","AMSL", "Plane" } },
-            { "airport", new string[] { "id", "name", "code", "worldposition", "amsl", "countrycode"} },
-            { "passangerplane", new string[]{ "id", "serial", "countrycode", "model"} },
-            { "cargoplane", new string[]{ "id", "serial", "countrycode", "model", "maxload"} },
-            { "cargo", new string[]{ "id", "weight", "code", "description"} },
-            { "passanger", new string[]{ "id", "name", "age", "phone", "email", "class", "miles"}},
-            { "crew", new string[]{ "id", "name", "age", "phone", "email", "practise", "role" } },
-            { "plane", new string[]{ "ID", "Model", "Country", "Serial"} },
+            { "Flight", new string[] { "ID", "Origin", "Target", "TakeofTime", "LandingTime", "WorldPosition","AMSL", "Plane" } },
+            { "Airport", new string[] { "ID", "Name", "Code", "WorldPosition", "AMSL", "CountryCode"} },
+            { "PassengerPlane", new string[]{ "ID", "Serial", "CountryCode", "Model"} },
+            { "CargoPlane", new string[]{ "ID", "Serial", "CountryCode", "Model", "MaxLoad"} },
+            { "Cargo", new string[]{ "ID", "Weight", "Code", "Description"} },
+            { "Passenger", new string[]{ "ID", "Name", "Age", "Phone", "Email", "Class", "Miles"}},
+            { "Crew", new string[]{ "ID", "Name", "Age", "Phone", "Email", "Practise", "Role" } },
+            { "Plane", new string[]{ "ID", "Model", "Country", "Serial"} },
         };
 
-        private Dictionary<(string, string), string> type = new Dictionary<(string, string), string>()
-        {
-            { ("flight","id"), "uint"},
-            { ("flight","origin"), "struct"},
-            { ("flight","target"), "struct"},
-            { ("flight","landingtime"), "datetime"},
-            { ("flight","amsl"), "float"},
-        };
+
 
         public MakeCommand(ParseCommand pc)
         {
@@ -96,20 +89,22 @@ namespace projectAirport.SQL
 
             for (int i = 0; i < pc.conditions.Length; i++)
             {
-                if (fields[pc.objectClass].Contains(pc.conditions[i].value1) && fields[pc.objectClass].Contains(pc.conditions[i].value2))
-                    return false;
-                if (!fields[pc.objectClass].Contains(pc.conditions[i].value1) && !fields[pc.objectClass].Contains(pc.conditions[i].value2))
-                    return false;
-                if (fields[pc.objectClass].Contains(pc.conditions[i].value1))
-                {
-                    conditions[i].field = pc.conditions[i].value1;
-                    conditions[i].value = pc.conditions[i].value2;
-                }
-                else
-                {
-                    conditions[i].field = pc.conditions[i].value2;
-                    conditions[i].value = pc.conditions[i].value1;
-                }
+                conditions[i].field = pc.conditions[i].value1;
+                conditions[i].value = pc.conditions[i].value2;
+                //if (fields[pc.objectClass].Contains(pc.conditions[i].value1) && fields[pc.objectClass].Contains(pc.conditions[i].value2))
+                //    return false;
+                //if (!fields[pc.objectClass].Contains(pc.conditions[i].value1) && !fields[pc.objectClass].Contains(pc.conditions[i].value2))
+                //    return false;
+                //if (fields[pc.objectClass].Contains(pc.conditions[i].value1))
+                //{
+                //    conditions[i].field = pc.conditions[i].value1;
+                //    conditions[i].value = pc.conditions[i].value2;
+                //}
+                //else
+                //{
+                //    conditions[i].field = pc.conditions[i].value2;
+                //    conditions[i].value = pc.conditions[i].value1;
+                //}
 
                 conditions[i].andOr = pc.conditions[i].andOr;
 
@@ -127,6 +122,7 @@ namespace projectAirport.SQL
         public string value;
         public string andOr;
         public string comparer;
+        public string typeOfVariable;
     }
 
     internal class Comparer<T> where T : IComparable<T>
@@ -143,27 +139,3 @@ namespace projectAirport.SQL
     }
 
 }
-
-/*
- * 
- *   internal struct ConditionsMakeComand<T>
-    {
-        public string field;
-        public T value;
-        public string andOr;
-        public Func<T, T, bool> Comparison;
-    }
-
-    internal class Comparer<T> where T : IComparable<T>
-    {
-        public bool Less(T a, T b)
-        {
-            return a.CompareTo(b) < 0;
-        }
-
-        public bool Equal(T a, T b)
-        {
-            return a.CompareTo(b) == 0;
-        }
-    }
- */

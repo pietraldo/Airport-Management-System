@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace projectAirport
 {
@@ -23,5 +24,24 @@ namespace projectAirport
             Description = description;
         }
         public override void devideList(ListDivider lsd) { lsd.AddCargos(this); }
+
+        public override (bool, string, string) GetFieldAndType(string field)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    return (true, ID.ToString(), "uint");
+                case "Weight":
+                    return (true, weight.ToString(), "float");
+                case "Code":
+                    return (true, code, "string");
+                case "Description":
+                    return (true, description, "string");
+            }
+
+            return (false, "", "");
+        }
     }
 }

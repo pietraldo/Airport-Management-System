@@ -1,4 +1,5 @@
-﻿using NetworkSourceSimulator;
+﻿using Avalonia.Controls;
+using NetworkSourceSimulator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,30 @@ namespace projectAirport
             Role = role;
         }
         public override void devideList(ListDivider lsd) { lsd.AddCrews(this); }
+        public override (bool, string, string) GetFieldAndType(string field)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    return (true, ID.ToString(), "uint");
+                case "Name":
+                    return (true, name, "string");
+                case "Age":
+                    return (true, age.ToString(), "uint");
+                case "Phone":
+                    return (true, phone, "string");
+                case "Email":
+                    return (true, email, "string");
+                case "Practise":
+                    return (true, practice.ToString(), "uint");
+                case "Role":
+                    return (true, role, "string");
+            }
+
+            return (false, "", "");
+        }
     }
 
     public class Passenger : Person
@@ -70,5 +95,30 @@ namespace projectAirport
             Miles = miles;
         }
         public override void devideList(ListDivider lsd) { lsd.AddPassengers(this); }
+
+        public override (bool, string, string) GetFieldAndType(string field)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    return (true, ID.ToString(), "uint");
+                case "Name":
+                    return (true, name, "string");
+                case "Age":
+                    return (true, age.ToString(), "uint");
+                case "Phone":
+                    return (true, phone, "string");
+                case "Email":
+                    return (true, email, "string");
+                case "Class":
+                    return (true, classe, "string");
+                case "Miles":
+                    return (true, miles.ToString(), "uint");
+            }
+
+            return (false, "", "");
+        }
     }
 }

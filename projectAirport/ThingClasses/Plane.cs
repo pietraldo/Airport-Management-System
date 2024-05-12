@@ -45,6 +45,26 @@ namespace projectAirport
         {
             return "{ " + $"{ID}, {Serial}, {Country},{Model}, {maxLoad}" + "}";
         }
+        public override (bool, string, string) GetFieldAndType(string field)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    return (true, ID.ToString(), "uint");
+                case "Serial":
+                    return (true, serial, "string");
+                case "CountryCode":
+                    return (true, country, "string");
+                case "Model":
+                    return (true, model, "string");
+                case "MaxLoad":
+                    return (true, maxLoad.ToString(), "float");
+            }
+
+            return (false, "", "");
+        }
     }
 
     public class PassengerPlane : Plane
@@ -74,6 +94,31 @@ namespace projectAirport
         public override string ToString()
         {
             return "{ " + $"{ID}, {Serial}, {Country},{Model}, {firstClassSize}, {buisnessClassSize}, {economyClassSize}" + "}";
+        }
+
+        public override (bool, string, string) GetFieldAndType(string field)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    return (true, ID.ToString(), "uint");
+                case "Serial":
+                    return (true, serial, "string");
+                case "CountryCode":
+                    return (true, country, "string");
+                case "Model":
+                    return (true, model, "string");
+                case "FirstClassSize":
+                    return (true, firstClassSize.ToString(), "uint");
+                case "BusinessClassSize":
+                    return (true, buisnessClassSize.ToString(), "uint");
+                case "EconomyClassSize":
+                    return (true, economyClassSize.ToString(), "uint");
+            }
+
+            return (false, "", "");
         }
     }
 }
