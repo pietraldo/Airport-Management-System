@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace projectAirport.SQL
 {
-    public enum operations {display, update, delete, add };
     internal class ParseCommand
     {
         string command;
-        public operations operation;
+        public string operation;
         public string objectClass;
         public string[] fieldsToDisplay;
-        public ConditionParse[]? conditions;
+        public ConditionParse[] conditions= Array.Empty<ConditionParse>();
 
         public ParseCommand(string command)
         {
@@ -22,107 +21,142 @@ namespace projectAirport.SQL
 
         public bool Execute()
         {
-            SetOperation(command);
-            objectClass = GetObjectClass(command);
-            fieldsToDisplay = GetFieldsToDisplay(command);
-            conditions = GetConditions(command);
+            if (!SetOperation(command)) return false;
+            if (!SetObjectClass(command)) return false;
+            if (!SetFieldsToDisplay(command)) return false;
+            if (!SetConditions(command)) return false;
             return true;
         }
 
         private bool SetOperation(string command)
         {
-            switch(command.Split(' ')[0])
-            {
-                case "display":
-                    operation = operations.display;
-                    return true;
-                case "update":
-                    operation = operations.update;
-                    return true;
-                case "add":
-                    operation = operations.add;
-                    return true;
-                case "delete":
-                    operation = operations.delete;
-                    return true;
-            }
+            operation = command.Split(' ')[0];
+            if (operation == "display" || operation == "update" || operation == "add" || operation == "delete")
+                return true;
+            Console.WriteLine($"Operation {operation} not known");
             return false;
         }
-        private string? GetObjectClass(string command)
+        private bool SetObjectClass(string command)
         {
             string[] commands = command.Split(' ');
+
+            if (operation != "display")
+            {
+                if (commands.Length <= 1)
+                {
+                    Console.WriteLine("Missing objectClass");
+                    return false;
+                }
+
+                objectClass = commands[1];
+                return true;
+            }
+
             string? object_class = null;
             for (int i = 0; i < commands.Length - 1; i++)
-                if (string.Equals(commands[i], "from"))
+                if (commands[i] == "from")
                     object_class = commands[i + 1];
+            if (object_class == null)
+            {
+                Console.WriteLine("Missing objectClass");
+                return false;
+            }
 
-            return object_class;
+            objectClass = object_class;
+            return true;
         }
-        private string[]? GetFieldsToDisplay(string command)
+        private bool SetFieldsToDisplay(string command)
         {
-            int startIndex = command.IndexOf("display")+7;
+            if (operation != "display") return true;
+
+            int startIndex = command.IndexOf("display") + 7;
             int endIndex = command.IndexOf("from");
 
-            if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex) return null;
-            
+            if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex)
+            {
+                Console.WriteLine("Wrong fields to display");
+                return false;
+            }
 
-            string[] fields= command.Substring(startIndex, endIndex - startIndex).Trim().Split(',', StringSplitOptions.TrimEntries);
 
-            return fields;
+            fieldsToDisplay = command.Substring(startIndex, endIndex - startIndex).Trim().Split(',', StringSplitOptions.TrimEntries);
+            if (fieldsToDisplay.Length == 0 || fieldsToDisplay[0] == "")
+            {
+                Console.WriteLine("Missing fields to display");
+                return false;
+            }
+
+            return true;
         }
-        private ConditionParse[]? GetConditions(string command)
+        private bool SetConditions(string command)
         {
-            string[] cond = command.Split(" where ");
-            if (cond.Length != 2) return null;
+            if (operation == "add") return true;
 
-            string[] splited = cond[1].Split(new string[] { " and ", " or " }, StringSplitOptions.None);
+            string[] parts = command.Split(" where ");
 
-            ConditionParse[] conds = new ConditionParse[splited.Length];
+            if (parts.Length == 1) return true;
+            if(parts.Length > 2)
+            {
+                Console.WriteLine("Syntax Error: to many where");
+                return false;
+            }
+
+            string[] splited = parts[1].Split(new string[] { " and ", " or " }, StringSplitOptions.None);
+            conditions = new ConditionParse[splited.Length];
+
             int len = 0;
             for (int i = 0; i < splited.Length; i++)
             {
-                string[] compers = new string[] { "<=", ">=", "!=", "=", ">", "<" };
+                string[] compers = ["<=", ">=", "!=", "=", ">", "<"];
                 bool ok = false;
-                
+
                 for (int j = 0; j < compers.Length; j++)
                 {
                     if (splited[i].Contains(compers[j]))
                     {
                         ok = true;
                         string[] data = splited[i].Split(compers[j], StringSplitOptions.TrimEntries);
-                        if (data.Length != 2) return null;
+                        if (data.Length != 2)
+                        {
+                            Console.WriteLine("Wrong condition: " + splited[i]);
+                            return false;
+                        }
 
-                        conds[i] = new ConditionParse();
-                        conds[i].value1 = data[0];
-                        conds[i].value2= data[1];
-                        conds[i].compare= compers[j];
+                        conditions[i] = new ConditionParse();
+                        conditions[i].value1 = data[0];
+                        conditions[i].value2 = data[1];
+                        conditions[i].compare = compers[j];
 
-                        
+
                         if (i == 0)
-                            conds[i].andOr = "or";
+                            conditions[i].andOr = "or";
                         else
                         {
 
-                            if (cond[1][len+2-1]=='a')
+                            if (parts[1][len + 2 - 1] == 'a')
                             {
                                 len += 5;
-                                conds[i].andOr = "and";
+                                conditions[i].andOr = "and";
                             }
                             else
                             {
                                 len += 4;
-                                conds[i].andOr = "or";
+                                conditions[i].andOr = "or";
                             }
                         }
                         break;
                     }
                 }
-                if (ok == false) return null;
+                if (ok == false)
+                {
+                    Console.WriteLine("Wrong condition: " + splited[i]);
+                    return false;
+                }
                 len += splited[i].Length;
             }
-            
 
-            return conds;
+
+            return true;
         }
 
 
@@ -133,16 +167,16 @@ namespace projectAirport.SQL
             Console.WriteLine($"Operation: {operation}");
             Console.WriteLine($"Object Class: {objectClass}");
             Console.WriteLine($"Fields to display: ");
-            if(fieldsToDisplay!= null)
-            foreach (var field in fieldsToDisplay)
-                Console.Write(field+", ");
+            if (fieldsToDisplay != null)
+                foreach (var field in fieldsToDisplay)
+                    Console.Write(field + ", ");
             Console.WriteLine($"Conditions: ");
-            if(conditions!=null)
-            foreach (var cond in conditions)
-                Console.WriteLine($"[{cond.value1}, {cond.value2}, {cond.andOr}, {cond.compare}]");
+            if (conditions != null)
+                foreach (var cond in conditions)
+                    Console.WriteLine($"[{cond.value1}, {cond.value2}, {cond.andOr}, {cond.compare}]");
         }
 
-       
+
     }
     internal struct ConditionParse
     {

@@ -11,85 +11,100 @@ namespace projectAirport.SQL
     internal class ExecuteCommand
     {
         public MakeCommand mc;
+        public string objectClass;
         DataSource data;
         public string[,] toPrint;
         public ExecuteCommand(MakeCommand mc, DataSource dataSource)
         {
             this.mc = mc;
+            objectClass=mc.objectClass;
             data = dataSource;
         }
 
         public bool Execute()
         {
             List<Thing> thingList = new List<Thing>();
-            switch (mc.objectClass)
+
+            if (!SetObjectList(ref thingList)) return false;
+            if (!FilterList(ref thingList)) return false;
+            if(!ChooseFieldsToPrint(ref thingList)) return false;
+
+            return true;
+        }
+
+        private bool SetObjectList(ref List<Thing> list)
+        {
+            switch (objectClass)
             {
                 case "Flight":
-                    foreach(var a in data.divider.Flights)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.Flights)
+                        list.Add(a);
                     break;
                 case "Airport":
-                    foreach(var a in data.divider.Airports)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.Airports)
+                        list.Add(a);
                     break;
                 case "PassengerPlane":
-                    foreach(var a in data.divider.PassengerPlanes)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.PassengerPlanes)
+                        list.Add(a);
                     break;
                 case "CargoPlane":
-                    foreach(var a in data.divider.CargoPlanes)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.CargoPlanes)
+                        list.Add(a);
                     break;
                 case "Cargo":
-                    foreach(var a in data.divider.Cargos)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.Cargos)
+                        list.Add(a);
                     break;
                 case "Passenger":
-                    foreach(var a in data.divider.Passengers)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.Passengers)
+                        list.Add(a);
                     break;
                 case "Crew":
-                    foreach(var a in data.divider.Crews)
-                        thingList.Add(a);
+                    foreach (var a in data.divider.Crews)
+                        list.Add(a);
                     break;
-                   
+                default:
+                    Console.WriteLine("Wrong class");
+                    return false;
+
             }
-            return ChooseFieldsToPrintFlight(FilterFlights(thingList));
+            return true;
         }
 
-        private List<Thing> FilterFlights(List<Thing> flights)
+        private bool FilterList(ref List<Thing> list)
         {
+            List<Thing> listFiltered = new List<Thing>();
 
-            List<Thing> flightsPassed = new List<Thing>();
-            if (mc.conditions != null)
+            if (mc.conditions.Count() == 0) return true;
+
+            for (int i = 0; i < list.Count; i++)
             {
-                for (int i = 0; i < flights.Count; i++)
+                bool add = false;
+                for (int j = 0; j < mc.conditions.Length; j++)
                 {
-                    bool add = false;
-                    for (int j = 0; j < mc.conditions.Length; j++)
+                    string value = mc.conditions[j].value;
+                    (bool correct, string field, string typeOfVariable) = list[i].GetFieldAndType(mc.conditions[j].field);
+                    if (!correct)
                     {
-                        string value = mc.conditions[j].value;
-                        (bool correct, string field, string typeOfVariable) = flights[i].GetFieldAndType(mc.conditions[j].field);
-                        if (!correct) continue;
-                        
-                        bool res = Comparer.Compare(field,value , mc.conditions[j].comparer, typeOfVariable);
-                        
-                        add = (mc.conditions[j].andOr == "and") ? add && res : add || res;
+                        Console.WriteLine($"Wrong Condition Field {mc.conditions[j].field}");
+                        return false;
                     }
-                    if (add)
-                    {
-                        flightsPassed.Add(flights[i]);
-                    }
+
+                    bool res = Comparer.Compare(field, value, mc.conditions[j].comparer, typeOfVariable);
+
+                    add = (mc.conditions[j].andOr == "and") ? add && res : add || res;
+                }
+                if (add)
+                {
+                    listFiltered.Add(list[i]);
                 }
             }
-            else
-            {
-                flightsPassed = flights;
-            }
+            list = listFiltered;
 
-            return flightsPassed;
+            return true;
         }
-        private bool ChooseFieldsToPrintFlight(List<Thing> objects)
+        private bool ChooseFieldsToPrint(ref List<Thing> objects)
         {
             toPrint = new string[objects.Count, mc.fieldsToDisplay.Length];
             for (int i = 0; i < objects.Count; i++)
@@ -101,10 +116,13 @@ namespace projectAirport.SQL
                     string objectField = "";
 
                     (bool correct, string field, string typeOfVariable) = objects[i].GetFieldAndType(mc.fieldsToDisplay[j]);
-                    if (!correct) return false;
-                    objectField = field;
-                    
+                    if (!correct)
+                    {
+                        Console.WriteLine($"Wrong Condition Field {mc.conditions[j].field}");
+                        return false;
+                    }
 
+                    objectField = field;
                     toPrint[i, j] = objectField;
                 }
             }
