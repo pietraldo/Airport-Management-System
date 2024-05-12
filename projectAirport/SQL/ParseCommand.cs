@@ -78,11 +78,12 @@ namespace projectAirport.SQL
             string[] splited = cond[1].Split(new string[] { " and ", " or " }, StringSplitOptions.None);
 
             ConditionParse[] conds = new ConditionParse[splited.Length];
+            int len = 0;
             for (int i = 0; i < splited.Length; i++)
             {
                 string[] compers = new string[] { "<=", ">=", "!=", "=", ">", "<" };
                 bool ok = false;
-                int len = 0;
+                
                 for (int j = 0; j < compers.Length; j++)
                 {
                     if (splited[i].Contains(compers[j]))
@@ -96,13 +97,13 @@ namespace projectAirport.SQL
                         conds[i].value2= data[1];
                         conds[i].compare= compers[j];
 
-                        len += splited[i].Length;
+                        
                         if (i == 0)
                             conds[i].andOr = "or";
                         else
                         {
 
-                            if (cond[1][len+2]=='a')
+                            if (cond[1][len+2-1]=='a')
                             {
                                 len += 5;
                                 conds[i].andOr = "and";
@@ -117,7 +118,7 @@ namespace projectAirport.SQL
                     }
                 }
                 if (ok == false) return null;
-
+                len += splited[i].Length;
             }
             
 

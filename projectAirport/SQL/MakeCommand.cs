@@ -9,7 +9,7 @@ namespace projectAirport.SQL
     internal class MakeCommand
     {
 
-        public ConditionsMakeComand<object>[]? conditions;
+        public ConditionsMakeComand[]? conditions;
         public string[] fieldsToDisplay;
         public string objectClass;
         private ParseCommand pc;
@@ -92,7 +92,7 @@ namespace projectAirport.SQL
                 return false;
 
 
-            conditions = new ConditionsMakeComand<object>[pc.conditions.Length];
+            conditions = new ConditionsMakeComand[pc.conditions.Length];
 
             for (int i = 0; i < pc.conditions.Length; i++)
             {
@@ -113,17 +113,40 @@ namespace projectAirport.SQL
 
                 conditions[i].andOr = pc.conditions[i].andOr;
 
-                Comparer<int> comparer1 = new Comparer<int>();
-                Comparer<string> comparer2 = new Comparer<string>();
+                
 
-
-                //conditions[i].Comparison = comparer1.Less;
+                conditions[i].comparer = pc.conditions[i].compare;
             }
 
             return true;
         }
     }
-    internal struct ConditionsMakeComand<T>
+    internal struct ConditionsMakeComand
+    {
+        public string field;
+        public string value;
+        public string andOr;
+        public string comparer;
+    }
+
+    internal class Comparer<T> where T : IComparable<T>
+    {
+        public bool Less(T a, T b)
+        {
+            return a.CompareTo(b) < 0;
+        }
+
+        public bool Equal(T a, T b)
+        {
+            return a.CompareTo(b) == 0;
+        }
+    }
+
+}
+
+/*
+ * 
+ *   internal struct ConditionsMakeComand<T>
     {
         public string field;
         public T value;
@@ -143,5 +166,4 @@ namespace projectAirport.SQL
             return a.CompareTo(b) == 0;
         }
     }
-
-}
+ */

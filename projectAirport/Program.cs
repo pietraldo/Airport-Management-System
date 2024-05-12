@@ -58,7 +58,9 @@ namespace projectAirport
                 {
                     ParseCommand ps = new ParseCommand(asw);
                     if (!ps.Execute()) continue;
-                    
+
+                    ps.Show();
+
                     MakeCommand mk = new MakeCommand(ps);
                     if (!mk.Execute()) continue;
                     
@@ -69,7 +71,7 @@ namespace projectAirport
                     if (!pc.Execute()) continue;
                     
                     
-                    ps.Show();
+                    
                 }
             }
             Console.WriteLine("exiting...");

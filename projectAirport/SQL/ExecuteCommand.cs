@@ -18,7 +18,7 @@ namespace projectAirport.SQL
             data = dataSource;
         }
 
-       
+
         static Dictionary<string, Func<Flight, string, string>> flightsDic = new Dictionary<string, Func<Flight, string, string>>() {
             { "ID", (flight, command) => flight.ID.ToString() },
             { "Origin", (flight, command) => {
@@ -84,33 +84,37 @@ namespace projectAirport.SQL
             }
             return true;
         }
-       
+
         private List<Flight> FilterFlights(List<Flight> flights)
         {
+
+            List<Flight> flightsPassed = new List<Flight>();
+            if (mc.conditions != null)
             {
-                //List<Flight> flightsPassed = new List<Flight>();
-                //if (mc.conditions != null)
-                //{
-                //    for (int i = 0; i < flights.Count; i++)
-                //    {
-                //        bool add = false;
-                //        for (int j = 0; j < mc.conditions.Length; j++)
-                //        {
-                //            bool value = mc.conditions[j].Comparison(flights[i].ID, mc.conditions[j].value);
-                //            add = (mc.conditions[j].andOr == "and") ? add && value : add || value;
-                //        }
-                //        if (add)
-                //        {
-                //            flightsPassed.Add(flights[i]);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    flightsPassed = flights;
-                //}
+                for (int i = 0; i < flights.Count; i++)
+                {
+                    bool add = false;
+                    for (int j = 0; j < mc.conditions.Length; j++)
+                    {
+                        string value = mc.conditions[j].value;
+                        string field = flightsDic[mc.conditions[j].field](flights[i], mc.conditions[j].field);
+                        
+                        bool res = Comparer.Compare(field,value , mc.conditions[j].comparer, "float");
+                        Console.Write(res);
+                        add = (mc.conditions[j].andOr == "and") ? add && res : add || res;
+                    }
+                    if (add)
+                    {
+                        flightsPassed.Add(flights[i]);
+                    }
+                }
             }
-            return flights;
+            else
+            {
+                flightsPassed = flights;
+            }
+
+            return flightsPassed;
         }
         private void ChooseFieldsToPrintFlight(List<Flight> flights)
         {
@@ -134,5 +138,38 @@ namespace projectAirport.SQL
                 }
             }
         }
+
     }
+
+    internal class Comparer
+    {
+        public static bool Compare(string s1, string s2, string comparer, string typeofVariable)
+        {
+            switch (typeofVariable)
+            {
+                case "int":
+                    return MakeComparation<int>(int.Parse(s1), int.Parse(s2), comparer);
+                case "Single":
+                    return MakeComparation<Single>(Single.Parse(s1), Single.Parse(s2), comparer);
+                case "float":
+                    return MakeComparation<Single>(Single.Parse(s1), Single.Parse(s2), comparer);
+            }
+
+            return false;
+        }
+        private static bool MakeComparation<T>(T field, T value, string comparer) where T : IComparable
+        {
+            switch (comparer)
+            {
+                case ">":
+                    return field.CompareTo(value) > 0;
+                case "<":
+                    return field.CompareTo(value) < 0;
+                case "=":
+                    return field.CompareTo(value) == 0;
+            }
+            return false;
+        }
+    }
+
 }
