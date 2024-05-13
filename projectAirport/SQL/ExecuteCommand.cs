@@ -2,6 +2,7 @@
 using Microsoft.Win32.SafeHandles;
 using ReactiveUI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -17,12 +18,14 @@ namespace projectAirport.SQL
         DataSource data;
         public string operation;
         public string[,] toPrint;
+        public (string field, string value)[] fieldsToSet;
         public ExecuteCommand(MakeCommand mc, DataSource dataSource)
         {
             this.mc = mc;
             objectClass=mc.objectClass;
             data = dataSource;
             operation = mc.operation;
+            fieldsToSet = mc.pc.fieldsToSet;
         }
 
         public bool Execute()
@@ -36,7 +39,27 @@ namespace projectAirport.SQL
                 if(!ChooseFieldsToPrint(ref thingList)) return false;
             if (operation == "delete")
                 if (!DeleteObjects(ref thingList)) return false;
+            if (operation == "update")
+                if (!UpdateObjects(ref thingList)) return false;
 
+            return true;
+        }
+
+        private bool UpdateObjects(ref List<Thing> list)
+        { 
+            foreach (Thing thing in list)
+            {
+                foreach (var update in fieldsToSet)
+                {
+                    if (!thing.SetField(update.field, update.value, data))
+                    {
+                        Console.WriteLine($"Error in setting field: {update.field}={update.value}");
+                        return false;
+                    }
+                }
+            }
+
+            Console.WriteLine($"{list.Count} rows affected");
             return true;
         }
 
@@ -45,8 +68,9 @@ namespace projectAirport.SQL
             foreach(var thing in list)
                 data.thingList.Remove(thing);
 
-            // i want to delete it from whole aplication
-            
+            //TODO: i want to delete it from whole aplication
+
+            Console.WriteLine($"{list.Count} rows affected");
 
             // re divide all object to proper lists
             ListDivider divider = new ListDivider();

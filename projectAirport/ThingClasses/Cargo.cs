@@ -16,7 +16,7 @@ namespace projectAirport
         public Single Weight { get { return weight; } set { weight = value; } }
         public string Code { get { return code; } set { code = value; } }
         public string Description { get { return description; } set { description = value; } }
-
+        public Cargo() { }
         public Cargo(UInt64 id, float weight, string code, string description) : base(id)
         {
             Weight = weight;
@@ -42,6 +42,30 @@ namespace projectAirport
             }
 
             return (false, "", "");
+        }
+        public override bool SetField(string field, string value, DataSource data)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    ID = uint.Parse(value);
+                    break;
+                case "Weight":
+                    Weight = uint.Parse(value);
+                    break;
+                case "Code":
+                    Code = value;
+                    break;
+                case "Description":
+                    Description = value;
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
         }
     }
 }

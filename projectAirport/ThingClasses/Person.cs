@@ -20,6 +20,7 @@ namespace projectAirport
         public string Phone { get { return phone; } set { phone = value; } }
         public string Email { get { return email; } set { email = value; } }
 
+        public Person() { }
         public Person(UInt64 id, string name, ulong age, string phone, string email) : base(id)
         {
             Name = name;
@@ -50,6 +51,7 @@ namespace projectAirport
         public UInt16 Practice { get { return practice; } set { practice = value; } }
         public string Role { get { return role; } set { role = value; } }
 
+        public Crew() { }
         public Crew(UInt64 id, string name, ulong age, string phone, string email, ushort practice, string role) : base(id, name, age, phone, email)
         {
             Practice = practice;
@@ -80,6 +82,39 @@ namespace projectAirport
 
             return (false, "", "");
         }
+        public override bool SetField(string field, string value, DataSource data)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    ID = uint.Parse(value);
+                    break;
+                case "Name":
+                    Name = value;
+                    break;
+                case "Age":
+                    Age = uint.Parse(value);
+                    break;
+                case "Phone":
+                    Phone = value;
+                    break;
+                case "Email":
+                    Email = value;
+                    break;
+                case "Practise":
+                    Practice = UInt16.Parse(value);
+                    break;
+                case "Role":
+                    Role =value;
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+        }
     }
 
     public class Passenger : Person
@@ -89,6 +124,7 @@ namespace projectAirport
         public string Classs { get { return classe; } set { classe = value; } }
         public UInt64 Miles { get { return miles; } set { miles = value; } }
 
+        public Passenger() { }
         public Passenger(UInt64 id, string name, ulong age, string phone, string email, string classs, ulong miles) : base(id, name, age, phone, email)
         {
             Classs = classs;
@@ -119,6 +155,39 @@ namespace projectAirport
             }
 
             return (false, "", "");
+        }
+        public override bool SetField(string field, string value, DataSource data)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    ID = uint.Parse(value);
+                    break;
+                case "Name":
+                    Name = value;
+                    break;
+                case "Age":
+                    Age=uint.Parse(value);
+                    break;
+                case "Phone":
+                    Phone= value;
+                    break;
+                case "Email":
+                    Email = value;
+                    break;
+                case "Class":
+                    Classs = value;
+                    break;
+                case "Miles":
+                    Miles =uint.Parse( value);
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
         }
     }
 }

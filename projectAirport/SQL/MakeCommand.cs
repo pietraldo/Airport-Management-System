@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace projectAirport.SQL
 {
@@ -13,7 +14,7 @@ namespace projectAirport.SQL
         public ConditionsMakeComand[] conditions= Array.Empty<ConditionsMakeComand>();
         public string[] fieldsToDisplay;
         public string objectClass;
-        private ParseCommand pc;
+        public ParseCommand pc;
         public string operation;
 
 
@@ -39,7 +40,92 @@ namespace projectAirport.SQL
             if (!CheckObjectClass()) return false;
             if (!CheckDisplayFields()) return false;
             if (!MakeConditions(pc)) return false;
+            if (!CheckSetFieldsAndValues()) return false;
 
+            return true;
+        }
+        private bool CheckSetFieldsAndValues()
+        {
+            if (operation != "update") return true;
+
+            Flight f = new Flight();
+            Airport ar = new Airport();
+            Plane plane = new PassengerPlane();
+            f.Plane=plane;
+            f.Origin = ar;
+            f.Target= ar;
+
+            Thing thing1= f;
+            
+            switch (objectClass)
+            {
+                case "Flight":
+                    thing1 = f;
+                    break;
+                case "Airport":
+                    thing1= ar;
+                    break;
+                case "PassengerPlane":
+                    thing1= new PassengerPlane();
+                    break;
+                case "CargoPlane":
+                    thing1= new CargoPlane();
+                    break;
+                case "Cargo":
+                    thing1 = new Cargo();
+                    break;
+                case "Passenger":
+                    thing1 = new Passenger();
+                    break;
+                case "Crew":
+                    thing1= new Crew();
+                    break;
+            }
+
+            foreach (var update in pc.fieldsToSet)
+            {
+                (bool correctField, string value, string typeofVariable) = thing1.GetFieldAndType(update.field);
+                if (!correctField)
+                {
+                    Console.WriteLine($"Wrong name of field: {update.field}");
+                    return false;
+                }
+                bool valueOk = true;
+                switch (typeofVariable)
+                {
+                    case "int":
+                        int a;
+                        if (!int.TryParse(update.value, out a))
+                            valueOk = false;
+                        break;
+                    case "Single":
+                        Single b;
+                        if (!Single.TryParse(update.value, out b))
+                            valueOk = false;
+                        break;
+                    case "float":
+                        float c;
+                        if (!float.TryParse(update.value, out c))
+                            valueOk = false;
+                        break;
+                    case "struct":
+                    case "uint":
+                        uint d;
+                        if (!uint.TryParse(update.value, out d))
+                            valueOk = false;
+                        break;
+                    case "DateTime":
+                        DateTime e;
+                        if (!DateTime.TryParse(update.value, out e))
+                            valueOk = false;
+                        break;
+                }
+                if (!valueOk)
+                {
+                    Console.WriteLine($"Wrong value({update.value}) of field: {update.field}");
+                    return false;
+                }
+            }
             return true;
         }
         private bool CheckObjectClass()

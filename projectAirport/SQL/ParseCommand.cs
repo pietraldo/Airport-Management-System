@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarfBuzzSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace projectAirport.SQL
         public string operation;
         public string objectClass;
         public string[] fieldsToDisplay;
+        public (string field, string value)[] fieldsToSet;
         public ConditionParse[] conditions= Array.Empty<ConditionParse>();
 
         public ParseCommand(string command)
@@ -24,7 +26,9 @@ namespace projectAirport.SQL
             if (!SetOperation(command)) return false;
             if (!SetObjectClass(command)) return false;
             if (!SetFieldsToDisplay(command)) return false;
+            if (!SetFieldsToSet(command)) return false;
             if (!SetConditions(command)) return false;
+            
             return true;
         }
 
@@ -84,6 +88,46 @@ namespace projectAirport.SQL
             {
                 Console.WriteLine("Missing fields to display");
                 return false;
+            }
+
+            return true;
+        }
+        private bool SetFieldsToSet(string command)
+        {
+            if (operation != "update") return true;
+
+            if (command.Split(" ")[2]!="set")
+            {
+                Console.WriteLine("No set word in update command");
+                return false;
+            }
+
+            int startIndex = command.IndexOf("(");
+            int endIndex = command.IndexOf(")");
+
+            if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex)
+            {
+                Console.WriteLine("Syntax error");
+                return false;
+            }
+
+            string[] setts = command.Substring(startIndex+1, endIndex - startIndex-1).Trim().Split(',', StringSplitOptions.TrimEntries);
+            if (setts.Length == 0 || setts[0] == "")
+            {
+                Console.WriteLine("Missing fields to set");
+                return false;
+            }
+
+            fieldsToSet = new (string, string)[setts.Length];
+            for(int i =0; i<setts.Length; i++)
+            {
+                string[] s = setts[i].Split("=", StringSplitOptions.TrimEntries);
+                if(s.Length!=2)
+                {
+                    Console.WriteLine("Wrong set field: " + setts[i]);
+                    return false;
+                }
+                fieldsToSet[i] = (s[0], s[1]);
             }
 
             return true;
@@ -166,14 +210,28 @@ namespace projectAirport.SQL
             Console.WriteLine();
             Console.WriteLine($"Operation: {operation}");
             Console.WriteLine($"Object Class: {objectClass}");
-            Console.WriteLine($"Fields to display: ");
-            if (fieldsToDisplay != null)
-                foreach (var field in fieldsToDisplay)
-                    Console.Write(field + ", ");
-            Console.WriteLine($"Conditions: ");
-            if (conditions != null)
-                foreach (var cond in conditions)
-                    Console.WriteLine($"[{cond.value1}, {cond.value2}, {cond.andOr}, {cond.compare}]");
+
+            if(operation=="display")
+            {
+                Console.WriteLine($"Fields to display: ");
+                if (fieldsToDisplay != null)
+                    foreach (var field in fieldsToDisplay)
+                        Console.Write(field + ", ");
+            }
+            if(operation!="add")
+            {
+                Console.WriteLine($"Conditions: ");
+                if (conditions != null)
+                    foreach (var cond in conditions)
+                        Console.WriteLine($"[{cond.value1}, {cond.value2}, {cond.andOr}, {cond.compare}]");
+            }
+            if(operation=="update")
+            {
+                Console.WriteLine($"Setts: ");
+                foreach (var set in fieldsToSet)
+                    Console.WriteLine($"[{set.field}, {set.value}]");
+            }
+           
         }
 
 

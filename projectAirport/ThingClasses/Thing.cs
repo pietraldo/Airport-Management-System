@@ -22,7 +22,7 @@ namespace projectAirport
     [JsonDerivedType(typeof(Flight), "Flight")]
     public abstract class Thing
     {
-        protected UInt64 id;
+        protected UInt64 id=0;
         public UInt64 ID { get { return id; } set { id = value; } }
 
         public Thing(UInt64 id)
@@ -35,6 +35,7 @@ namespace projectAirport
 
         // Function returns if it found that field, value of this field and type
         public abstract (bool, string, string) GetFieldAndType(string field);
+        public abstract bool SetField(string field, string value, DataSource data);
 
         public void IDUpdateMethod(IDUpdateArgs args)
         {

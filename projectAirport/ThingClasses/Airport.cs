@@ -23,6 +23,7 @@ namespace projectAirport
         public Single Amsl { get { return amsl; } set { amsl = value; } }
         public string Country { get { return country; } set { country = value; } }
 
+        public Airport() { }
         public Airport(UInt64 id, string name, string code, Single longitude, Single latitude, float amls, string country)
             : base(id)
         {
@@ -91,6 +92,44 @@ namespace projectAirport
             }
 
             return (false, "", "");
+        }
+        public override bool SetField(string field, string value, DataSource data)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    ID = uint.Parse(value);
+                    break;
+                case "Name":
+                    Name = value;
+                    break;
+                case "Code":
+                    Code = value;
+                    break;
+                case "WorldPosition":
+                    if (fields.Length > 1)
+                    {
+                        if (fields[1] == "Lat")
+                            Latitude = float.Parse(value);
+                        else if (fields[1] == "Long")
+                            Longitude = float.Parse(value);
+                        else
+                            return false;
+                    }
+                    break;
+                case "AMSL":
+                    Amsl = float.Parse(value);
+                    break;
+                case "CountryCode":
+                    Country=value;
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
         }
     }
 }

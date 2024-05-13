@@ -40,6 +40,8 @@ namespace projectAirport
                 .Concat(dataSource.divider.CargoPlanes)
                 .Concat(dataSource.divider.PassengerPlanes).ToList();
 
+            
+
             string? asw = "";
             while ((asw = Console.ReadLine()) != "exit")
             {
@@ -60,7 +62,7 @@ namespace projectAirport
                     {
                         ParseCommand ps = new ParseCommand(asw);
                         if (!ps.Execute()) continue;
-
+                        
                         MakeCommand mk = new MakeCommand(ps);
                         if (!mk.Execute()) continue;
 

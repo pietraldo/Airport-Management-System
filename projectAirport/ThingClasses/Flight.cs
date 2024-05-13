@@ -1,4 +1,5 @@
-﻿using DynamicData.Kernel;
+﻿using Avalonia;
+using DynamicData.Kernel;
 using NetworkSourceSimulator;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,11 @@ namespace projectAirport
     {
         protected Airport? origin;
         protected Airport? target;
-        protected string takeOffTime;
-        protected string landingTime;
-        protected Single? longitude;
-        protected Single? latitude;
-        protected Single? amsl;
+        protected string takeOffTime = "";
+        protected string landingTime = "";
+        protected Single? longitude = 0;
+        protected Single? latitude = 0;
+        protected Single? amsl=0;
         protected Plane plane;
         protected Crew[] crewId;
         protected Thing[] loadId;
@@ -105,8 +106,7 @@ namespace projectAirport
             float distx = (float)(target.Longitude - longitude);
             float disty =(float)( target.Latitude - latitude);
 
-            if(Math.Abs((float)(distx / timeLeft)) >0.1|| Math.Abs((float)(disty / timeLeft)) > 0.1)
-                Console.WriteLine();
+            
             longitude += (float)(distx / timeLeft);
             latitude+=(float)(disty / timeLeft);
 
@@ -138,11 +138,15 @@ namespace projectAirport
                 case "ID":
                     return (true, ID.ToString(), "uint");
                 case "Origin":
+                    if (origin == null)
+                        return (true, "", "struct");
                     if (fields.Length > 1)
                         return origin.GetFieldAndType(string.Join(".", fields.Skip(1).ToArray()));
                     else
                         return (true, origin.ToString(), "struct");
                 case "Target":
+                    if (target == null)
+                        return (true, "", "struct");
                     if (fields.Length > 1)
                         return target.GetFieldAndType(string.Join(".", fields.Skip(1).ToArray()));
                     else
@@ -166,6 +170,8 @@ namespace projectAirport
                 case "AMSL":
                     return (true, amsl.ToString(), "float");
                 case "Plane":
+                    if(plane==null)
+                        return (true, "", "struct");
                     if (fields.Length > 1)
                         return plane.GetFieldAndType(string.Join(".", fields.Skip(1).ToArray()));
                     else
@@ -173,6 +179,91 @@ namespace projectAirport
             }
 
             return (false,"","");
+        }
+
+        public override bool SetField(string field, string value, DataSource data)
+        {
+            string[] fields = field.Split(".");
+
+            switch (fields[0])
+            {
+                case "ID":
+                    ID = uint.Parse(value);
+                    break;
+                case "Origin":
+                    if (fields.Length > 1)
+                        return origin.SetField(string.Join(".", fields.Skip(1).ToArray()), value, data);
+                    else
+                    {
+                        uint id = uint.Parse(value);
+                        for (int i = 0; i < data.divider.Airports.Count(); i++)
+                            if (id == data.divider.Airports[i].ID)
+                            {
+                                Origin = data.divider.Airports[i];
+                                return true;
+                            }
+                    }
+                    break;
+                case "Target":
+                    if (fields.Length > 1)
+                        return target.SetField(string.Join(".", fields.Skip(1).ToArray()), value, data);
+                    else
+                    {
+                        uint id = uint.Parse(value);
+                        for (int i = 0; i < data.divider.Airports.Count(); i++)
+                            if (id == data.divider.Airports[i].ID)
+                            {
+                                Target = data.divider.Airports[i];
+                                return true;
+                            }
+                    }
+                    break;
+                case "TakeofTime":
+                    TakeOffTime = value;
+                    break;
+                case "LandingTime":
+                    LandingTime= value;
+                    break;
+                case "WorldPosition":
+                    if (fields.Length > 1)
+                    {
+                        if (fields[1] == "Lat")
+                            Latitude = float.Parse(value);
+                        else if (fields[1] == "Long")
+                            Longitude=float.Parse(value);
+                        else
+                            return false;
+                    }
+                    break;
+                case "AMSL":
+                    Amsl = float.Parse(value);
+                    break;
+                case "Plane":
+                    if (fields.Length > 1)
+                        return plane.SetField(string.Join(".", fields.Skip(1).ToArray()), value, data);
+                    else
+                    {
+                        uint id = uint.Parse(value);
+                        for (int i = 0; i < data.divider.PassengerPlanes.Count(); i++)
+                            if (id == data.divider.PassengerPlanes[i].ID)
+                            {
+                                Plane = data.divider.PassengerPlanes[i];
+                                return true;
+                            }
+                        for (int i = 0; i < data.divider.CargoPlanes.Count(); i++)
+                            if (id == data.divider.CargoPlanes[i].ID)
+                            {
+                                Plane = data.divider.CargoPlanes[i];
+                                return true;
+                            }
+
+                    }
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
         }
     }
 }
