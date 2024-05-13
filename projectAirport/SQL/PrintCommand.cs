@@ -11,15 +11,16 @@ namespace projectAirport.SQL
     {
         string[,] toPrint;
         string[] fieldsToDisplay;
-        ExecuteCommand executeCommand;
+        ExecuteCommand ex;
         public PrintCommand(ExecuteCommand executeCommand)
         {
-            this.executeCommand = executeCommand;
+            this.ex = executeCommand;
         }
         public bool Execute()
         {
-            toPrint = executeCommand.toPrint;
-            fieldsToDisplay = executeCommand.mc.fieldsToDisplay;
+            if (ex.operation != "display") return true;
+            toPrint = ex.toPrint;
+            fieldsToDisplay = ex.mc.fieldsToDisplay;
             
             Print();
             return true;

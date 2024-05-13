@@ -14,6 +14,8 @@ namespace projectAirport.SQL
         public string[] fieldsToDisplay;
         public string objectClass;
         private ParseCommand pc;
+        public string operation;
+
 
         private Dictionary<string, string[]> fieldsToAccess = new Dictionary<string, string[]>() {
             { "Flight", new string[] { "ID", "Origin", "Target", "TakeofTime", "LandingTime", "WorldPosition","AMSL", "Plane" } },
@@ -30,6 +32,7 @@ namespace projectAirport.SQL
         {
             this.pc = pc;
             objectClass = pc.objectClass;
+            operation =pc.operation;
         }
         public bool Execute()
         {

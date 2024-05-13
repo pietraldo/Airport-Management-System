@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32.SafeHandles;
+﻿using DynamicData;
+using Microsoft.Win32.SafeHandles;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +15,14 @@ namespace projectAirport.SQL
         public MakeCommand mc;
         public string objectClass;
         DataSource data;
+        public string operation;
         public string[,] toPrint;
         public ExecuteCommand(MakeCommand mc, DataSource dataSource)
         {
             this.mc = mc;
             objectClass=mc.objectClass;
             data = dataSource;
+            operation = mc.operation;
         }
 
         public bool Execute()
@@ -27,7 +31,29 @@ namespace projectAirport.SQL
 
             if (!SetObjectList(ref thingList)) return false;
             if (!FilterList(ref thingList)) return false;
-            if(!ChooseFieldsToPrint(ref thingList)) return false;
+
+            if(operation=="display")
+                if(!ChooseFieldsToPrint(ref thingList)) return false;
+            if (operation == "delete")
+                if (!DeleteObjects(ref thingList)) return false;
+
+            return true;
+        }
+
+        private bool DeleteObjects(ref List<Thing> list)
+        {
+            foreach(var thing in list)
+                data.thingList.Remove(thing);
+
+            // i want to delete it from whole aplication
+            
+
+            // re divide all object to proper lists
+            ListDivider divider = new ListDivider();
+            data.divider = divider;
+            foreach(var thing in data.thingList)
+                thing.devideList(divider);
+
 
             return true;
         }
