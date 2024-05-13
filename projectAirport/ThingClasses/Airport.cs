@@ -9,12 +9,12 @@ namespace projectAirport
 {
     public class Airport : Thing, IReportable
     {
-        protected string name;
-        protected string code;
-        protected Single longitude;
-        protected Single latitude;
-        protected Single amsl;
-        protected string country;
+        protected string name="";
+        protected string code="";
+        protected Single longitude=0;
+        protected Single latitude=0;
+        protected Single amsl = 0;
+        protected string country = "";
 
         public string Name { get { return name; } set { name = value; } }
         public string Code { get { return code; } set { code = value; } }

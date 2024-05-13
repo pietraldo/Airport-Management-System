@@ -10,10 +10,10 @@ namespace projectAirport
 {
     public abstract class Person : Thing
     {
-        protected string name;
-        protected string phone;
-        protected UInt64 age;
-        protected string email;
+        protected string name = "";
+        protected string phone="";
+        protected UInt64 age = 0;
+        protected string email = "";
 
         public string Name { get { return name; } set { name = value; } }
         public UInt64 Age { get { return age; } set { age = value; } }
@@ -46,8 +46,8 @@ namespace projectAirport
 
     public class Crew : Person
     {
-        protected UInt16 practice;
-        protected string role;
+        protected UInt16 practice=0;
+        protected string role = "";
         public UInt16 Practice { get { return practice; } set { practice = value; } }
         public string Role { get { return role; } set { role = value; } }
 
@@ -119,8 +119,8 @@ namespace projectAirport
 
     public class Passenger : Person
     {
-        protected string classe;
-        protected UInt64 miles;
+        protected string classe="";
+        protected UInt64 miles = 0;
         public string Classs { get { return classe; } set { classe = value; } }
         public UInt64 Miles { get { return miles; } set { miles = value; } }
 

@@ -9,9 +9,9 @@ namespace projectAirport
 {
     public class Cargo : Thing
     {
-        protected Single weight;
-        protected string code;
-        protected string description;
+        protected Single weight=0;
+        protected string code = "";
+        protected string description = "";
 
         public Single Weight { get { return weight; } set { weight = value; } }
         public string Code { get { return code; } set { code = value; } }

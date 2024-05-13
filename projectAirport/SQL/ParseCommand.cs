@@ -94,9 +94,9 @@ namespace projectAirport.SQL
         }
         private bool SetFieldsToSet(string command)
         {
-            if (operation != "update") return true;
+            if (operation == "delete" || operation=="display") return true;
 
-            if (command.Split(" ")[2]!="set")
+            if (command.Split(" ")[2]!="set" && command.Split(" ")[2]!="new")
             {
                 Console.WriteLine("No set word in update command");
                 return false;

@@ -232,7 +232,7 @@ namespace projectAirport
                         else if (fields[1] == "Long")
                             Longitude=float.Parse(value);
                         else
-                            return false;
+                            return false; 
                     }
                     break;
                 case "AMSL":

@@ -41,6 +41,8 @@ namespace projectAirport.SQL
                 if (!DeleteObjects(ref thingList)) return false;
             if (operation == "update")
                 if (!UpdateObjects(ref thingList)) return false;
+            if (operation == "add")
+                if (!AddObjects()) return false;
 
             return true;
         }
@@ -60,6 +62,49 @@ namespace projectAirport.SQL
             }
 
             Console.WriteLine($"{list.Count} rows affected");
+            return true;
+        }
+        private bool AddObjects()
+        {
+            Thing thing1 = new Flight();
+
+            switch (objectClass)
+            {
+                case "Flight":
+                    thing1 = new Flight();
+                    break;
+                case "Airport":
+                    thing1 = new Airport();
+                    break;
+                case "PassengerPlane":
+                    thing1 = new PassengerPlane();
+                    break;
+                case "CargoPlane":
+                    thing1 = new CargoPlane();
+                    break;
+                case "Cargo":
+                    thing1 = new Cargo();
+                    break;
+                case "Passenger":
+                    thing1 = new Passenger();
+                    break;
+                case "Crew":
+                    thing1 = new Crew();
+                    break;
+            }
+            foreach (var update in fieldsToSet)
+            {
+                if (!thing1.SetField(update.field, update.value, data))
+                {
+                    Console.WriteLine($"Error in setting field: {update.field}={update.value}");
+                    return false;
+                }
+            }
+
+            thing1.devideList(data.divider);
+            data.thingList.Add(thing1);
+
+            Console.WriteLine($"Added row");
             return true;
         }
 
