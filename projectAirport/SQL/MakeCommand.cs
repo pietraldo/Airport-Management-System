@@ -150,7 +150,7 @@ namespace projectAirport.SQL
                 }
                 else if (fieldsToAccess[objectClass].Contains(field))
                 {
-                    fieldsToDisplayList.Add(field);
+                    fieldsToDisplayList.Add(pc.fieldsToDisplay[i]);
                 }
                 else
                 {
